@@ -81,6 +81,43 @@ def validate_dataset_variations(data):
     except Exception as e:
         return False, f"Error validating data: {str(e)}"
 
+def validate_confusion_matrix(data):
+    """Validate confusion matrix data format and values."""
+    try:
+        if not isinstance(data, dict):
+            return False, "Data must be a dictionary"
+        
+        if "classes" not in data or "matrix" not in data:
+            return False, "Data must contain 'classes' and 'matrix' keys"
+        
+        classes = data["classes"]
+        matrix = data["matrix"]
+        
+        if not isinstance(classes, list):
+            return False, "Classes must be a list"
+            
+        if len(classes) < 2:
+            return False, "Must have at least 2 classes"
+            
+        if not isinstance(matrix, list):
+            return False, "Matrix must be a list"
+            
+        if len(classes) != len(matrix):
+            return False, "Number of classes must match matrix dimensions"
+            
+        for row in matrix:
+            if len(row) != len(classes):
+                return False, "Matrix must be square"
+            for val in row:
+                if not isinstance(val, (int, float)):
+                    return False, "Matrix values must be numbers"
+                if val < 0:
+                    return False, "Matrix values must be non-negative"
+                    
+        return True, "Valid confusion matrix data"
+    except Exception as e:
+        return False, f"Error validating data: {str(e)}"
+
 def load_json_data(json_str):
     """Load and parse JSON data."""
     try:

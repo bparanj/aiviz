@@ -7,6 +7,7 @@ A Streamlit-based dashboard for visualizing various machine learning metrics and
 - **Hyperparameter Impact**: Visualize how different hyperparameter settings affect model performance
 - **Dataset Variations**: Compare model performance across different dataset splits
 - **Correlation Matrix**: Explore feature correlations in your data
+- **Confusion Matrix**: Visualize classification model performance across different classes
 
 ## Installation
 
@@ -52,6 +53,18 @@ streamlit run app.py
   "matrix": [
     [1.00, 0.65],
     [0.65, 1.00]
+  ]
+}
+```
+
+### Confusion Matrix
+```json
+{
+  "classes": ["Class1", "Class2", "Class3"],
+  "matrix": [
+    [10, 3, 2],
+    [1, 12, 2],
+    [2, 4, 15]
   ]
 }
 ```
