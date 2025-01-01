@@ -167,25 +167,32 @@ def create_plotly_figure(G: nx.Graph, communities: Dict[str, int], weight_thresh
         
         node_trace = go.Scatter(
             x=node_x, y=node_y,
-            mode='markers',
-            hoverinfo='text',
+            mode='markers+text',
             text=node_text,
+            textposition='top center',
+            hoverinfo='text',
+            hovertemplate='%{customdata[2]}<extra></extra>',
+            customdata=[[community_id, size, text] for size, text in zip(node_size, node_text)],
             marker=dict(
                 size=node_size,
                 color=community_id,
                 colorscale='Viridis',
                 showscale=False,
-                line=dict(width=1, color='#888')
+                line=dict(width=2, color='#888')
             ),
             name=f'Cluster {community_id + 1}',
-            customdata=[community_id] * len(node_x),  # Add community ID as custom data
             selectedpoints=[],  # Enable selection
             selected=dict(
                 marker=dict(
-                    size=20,
+                    size=30,
                     color='red',
-                    line=dict(width=3, color='darkred')
+                    opacity=0.9
                 )
+            ),
+            hoverlabel=dict(
+                bgcolor='white',
+                font=dict(size=12, family='Arial'),
+                bordercolor='#888'
             ),
             unselected=dict(
                 marker=dict(
@@ -211,7 +218,7 @@ def create_plotly_figure(G: nx.Graph, communities: Dict[str, int], weight_thresh
     return fig
 
 def main():
-    st.title("Graph Clustering Visualization")
+    st.title("10. Graph Clustering")
     st.write("""
     This visualization shows how nodes in a network form tightly knit groups or communities based on their connections.
     Nodes are colored by their detected community, and sized based on their number of connections.
