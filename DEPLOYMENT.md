@@ -36,6 +36,13 @@ The deployed app includes:
 - Dataset Variations Visualization
 - Correlation Matrix Visualization
 - Confusion Matrix Visualization
+- Attention Map Visualization
+- Feature-Feature Interactions Visualization
+- Pairwise Similarity Visualization
+- Knowledge Graph Visualization
+- Relationship Inference Visualization
+- Graph Clustering Visualization
+- Node Influence Visualization
 - Custom data input via JSON for each visualization
 - Interactive features and comprehensive data validation
 
