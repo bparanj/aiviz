@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    { "id": 0, "name": "Raw Data", "description": "Original dataset containing mixed data types" },
+    { "id": 1, "name": "Cleaned Data", "description": "Preprocessed data with missing values handled" },
+    { "id": 2, "name": "Numeric Features", "description": "Statistical features extracted from numerical columns" },
+    { "id": 3, "name": "Text Embeddings", "description": "Word vectors generated from text fields" },
+    { "id": 4, "name": "Key Phrases", "description": "Important phrases extracted from text" },
+    { "id": 5, "name": "Categorical Encodings", "description": "One-hot encoded categorical variables" },
+    { "id": 6, "name": "Time Features", "description": "Features extracted from datetime fields" }
+  ],
+  "links": [
+    { "source": 0, "target": 1, "value": 1000, "description": "Data cleaning and preprocessing" },
+    { "source": 1, "target": 2, "value": 800, "description": "Numeric feature extraction" },
+    { "source": 1, "target": 3, "value": 200, "description": "Text to vector conversion" },
+    { "source": 1, "target": 5, "value": 400, "description": "Categorical encoding" },
+    { "source": 1, "target": 6, "value": 300, "description": "Datetime feature extraction" },
+    { "source": 3, "target": 4, "value": 150, "description": "Key phrase extraction from embeddings" }
+  ]
+}

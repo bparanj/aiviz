@@ -1,0 +1,96 @@
+{
+  "valid_cases": [
+    {
+      "description": "Basic valid case with raw data and one feature",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Numeric Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      }
+    },
+    {
+      "description": "Multiple features with branching",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Cleaned Data" },
+          { "id": 2, "name": "Text Features" },
+          { "id": 3, "name": "Numeric Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 1000 },
+          { "source": 1, "target": 2, "value": 500 },
+          { "source": 1, "target": 3, "value": 500 }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "description": "Duplicate node IDs",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 0, "name": "Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 0, "value": 100 }
+        ]
+      },
+      "expected_error": "Node IDs must be unique"
+    },
+    {
+      "description": "Invalid link reference",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 2, "value": 100 }
+        ]
+      },
+      "expected_error": "Link source and target must reference valid node IDs"
+    },
+    {
+      "description": "Negative value",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": -100 }
+        ]
+      },
+      "expected_error": "Link value must be a non-negative number"
+    },
+    {
+      "description": "Single node only",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" }
+        ],
+        "links": []
+      },
+      "expected_error": "Data must contain at least two nodes (raw data and one feature)"
+    },
+    {
+      "description": "Missing required node fields",
+      "data": {
+        "nodes": [
+          { "id": 0 },
+          { "name": "Features" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      },
+      "expected_error": "Each node must have 'id' and 'name' fields"
+    }
+  ]
+}
