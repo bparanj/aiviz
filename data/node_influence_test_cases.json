@@ -1,0 +1,49 @@
+{
+  "valid_case": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice", "influence": 0.85 },
+      { "id": "NodeB", "label": "Bob", "influence": 0.40 },
+      { "id": "NodeC", "label": "Carol", "influence": 0.60 }
+    ],
+    "links": [
+      { "source": "NodeA", "target": "NodeB", "weight": 2.0 },
+      { "source": "NodeB", "target": "NodeC", "weight": 1.0 }
+    ]
+  },
+  "duplicate_node_ids": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice", "influence": 0.85 },
+      { "id": "NodeA", "label": "Bob", "influence": 0.40 }
+    ],
+    "links": []
+  },
+  "invalid_influence_negative": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice", "influence": -0.5 }
+    ],
+    "links": []
+  },
+  "invalid_link_reference": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice", "influence": 0.85 }
+    ],
+    "links": [
+      { "source": "NodeA", "target": "NonExistentNode", "weight": 1.0 }
+    ]
+  },
+  "missing_influence": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice" }
+    ],
+    "links": []
+  },
+  "invalid_weight": {
+    "nodes": [
+      { "id": "NodeA", "label": "Alice", "influence": 0.85 },
+      { "id": "NodeB", "label": "Bob", "influence": 0.40 }
+    ],
+    "links": [
+      { "source": "NodeA", "target": "NodeB", "weight": -1.0 }
+    ]
+  }
+}
