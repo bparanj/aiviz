@@ -118,6 +118,64 @@ def validate_confusion_matrix(data):
     except Exception as e:
         return False, f"Error validating data: {str(e)}"
 
+def validate_attention_map_data(data):
+    """Validate attention map data format and values."""
+    try:
+        if not isinstance(data, dict):
+            return False, "Data must be a dictionary"
+        
+        if "tokens" not in data or "attentionMaps" not in data:
+            return False, "Data must contain 'tokens' and 'attentionMaps' keys"
+        
+        tokens = data["tokens"]
+        attention_maps = data["attentionMaps"]
+        
+        if not isinstance(tokens, list) or len(tokens) == 0:
+            return False, "Tokens must be a non-empty list"
+            
+        if not isinstance(attention_maps, list):
+            return False, "AttentionMaps must be a list"
+            
+        tokens_count = len(tokens)
+        
+        for layer in attention_maps:
+            if not isinstance(layer, dict):
+                return False, "Each layer must be a dictionary"
+                
+            if "layerIndex" not in layer or "heads" not in layer:
+                return False, "Each layer must have 'layerIndex' and 'heads'"
+                
+            if not isinstance(layer["heads"], list):
+                return False, "Layer heads must be a list"
+                
+            for head in layer["heads"]:
+                if not isinstance(head, dict):
+                    return False, "Each head must be a dictionary"
+                    
+                if "headIndex" not in head or "matrix" not in head:
+                    return False, "Each head must have 'headIndex' and 'matrix'"
+                    
+                matrix = head["matrix"]
+                if not isinstance(matrix, list):
+                    return False, "Matrix must be a list"
+                    
+                if len(matrix) != tokens_count:
+                    return False, "Matrix dimensions must match number of tokens"
+                    
+                for row in matrix:
+                    if not isinstance(row, list) or len(row) != tokens_count:
+                        return False, "Matrix must be square with dimensions matching tokens"
+                        
+                    for val in row:
+                        if not isinstance(val, (int, float)):
+                            return False, "Matrix values must be numbers"
+                        if val < 0 or val > 1:
+                            return False, "Matrix values must be between 0 and 1"
+                            
+        return True, "Valid attention map data"
+    except Exception as e:
+        return False, f"Error validating data: {str(e)}"
+
 def load_json_data(json_str):
     """Load and parse JSON data."""
     try:
