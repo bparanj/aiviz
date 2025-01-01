@@ -7,7 +7,7 @@ st.set_page_config(
 )
 
 st.title("ML Visualization Dashboard")
-st.sidebar.title("Navigation")
+st.sidebar.title("Home")
 
 st.markdown("""
 Welcome to the Machine Learning Visualization Dashboard! This application provides interactive visualizations for:
