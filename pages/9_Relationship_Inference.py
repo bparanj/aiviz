@@ -387,14 +387,35 @@ def main():
                         edge_colors.extend([1.0 if is_path_edge else 0.1] * 3)
                     
                     # Add edges trace
+                    # Create base edges trace
                     path_fig.add_trace(go.Scatter(
                         x=edge_x, y=edge_y,
-                        line=dict(color='rgba(50,50,50,1)', width=2),
+                        line=dict(width=1, color='rgba(50,50,50,0.1)'),
                         hoverinfo='none',
                         mode='lines',
-                        line_color=edge_colors,
                         showlegend=False
                     ))
+                    
+                    # Create highlighted paths
+                    if paths:
+                        for path in paths:
+                            path_x = []
+                            path_y = []
+                            for i in range(len(path) - 1):
+                                source = path[i]
+                                target = path[i + 1]
+                                source_pos = pos[source]
+                                target_pos = pos[target]
+                                path_x.extend([source_pos[0], target_pos[0], None])
+                                path_y.extend([source_pos[1], target_pos[1], None])
+                            
+                            path_fig.add_trace(go.Scatter(
+                                x=path_x, y=path_y,
+                                line=dict(width=2, color='rgba(50,50,50,1)'),
+                                hoverinfo='none',
+                                mode='lines',
+                                showlegend=False
+                            ))
                     
                     
                     # Add nodes with highlighted path nodes
@@ -471,29 +492,7 @@ def main():
             else:
                 st.info(f"No paths found from {G.nodes[node_id]['label']} to other nodes.")
         
-        # Display path analysis between two selected nodes
-        st.header("Path Analysis")
-        
-        # Select nodes for path analysis
-        col1, col2 = st.columns(2)
-        with col1:
-            source_node = st.selectbox("Select source node", options=list(G.nodes()), key="source")
-        with col2:
-            target_node = st.selectbox("Select target node", options=list(G.nodes()), key="target")
-        
-        if source_node and target_node:
-            try:
-                # Find all simple paths between selected nodes
-                paths = list(nx.all_simple_paths(G, source_node, target_node))
-                
-                if paths:
-                    st.success(f"Found {len(paths)} path(s) between {source_node} and {target_node}")
-                    for i, path in enumerate(paths, 1):
-                        path_str = " → ".join([G.nodes[node]['label'] for node in path])
-                        st.write(f"Path {i}: {path_str}")
-                else:
-                    st.warning(f"No path found between {source_node} and {target_node}")
-            except nx.NetworkXNoPath:
+        # End of main function
                 st.warning(f"No path exists between {source_node} and {target_node}")
 
 if __name__ == "__main__":
