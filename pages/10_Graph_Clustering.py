@@ -102,27 +102,34 @@ def detect_communities(G: nx.Graph) -> Dict[str, int]:
                 communities[node] = i
         return communities
 
-def create_plotly_figure(G: nx.Graph, communities: Dict[str, int]) -> go.Figure:
+def create_plotly_figure(G: nx.Graph, communities: Dict[str, int], weight_threshold: float = 0.0) -> go.Figure:
     """Create a Plotly figure for the clustered graph."""
+    # Filter edges based on weight threshold
+    G_filtered = G.copy()
+    edges_to_remove = [(u, v) for u, v, d in G.edges(data=True) if d.get('weight', 1.0) < weight_threshold]
+    G_filtered.remove_edges_from(edges_to_remove)
+    
     # Use spring layout for node positioning
-    pos = nx.spring_layout(G, k=1/np.sqrt(len(G.nodes())), iterations=50)
+    pos = nx.spring_layout(G_filtered, k=1/np.sqrt(len(G_filtered.nodes())), iterations=50)
     
     # Create edge traces
     edge_x = []
     edge_y = []
-    edge_weights = []
+    edge_text = []
     
-    for edge in G.edges(data=True):
+    for edge in G_filtered.edges(data=True):
         x0, y0 = pos[edge[0]]
         x1, y1 = pos[edge[1]]
         edge_x.extend([x0, x1, None])
         edge_y.extend([y0, y1, None])
-        edge_weights.append(edge[2].get('weight', 1.0))
+        weight = edge[2].get('weight', 1.0)
+        edge_text.extend([f"Weight: {weight:.2f}", f"Weight: {weight:.2f}", None])
     
     edge_trace = go.Scatter(
         x=edge_x, y=edge_y,
         line=dict(width=1, color='#888'),
-        hoverinfo='none',
+        hoverinfo='text',
+        hovertext=edge_text,
         mode='lines')
     
     # Create node traces for each community
@@ -170,7 +177,22 @@ def create_plotly_figure(G: nx.Graph, communities: Dict[str, int]) -> go.Figure:
                 showscale=False,
                 line=dict(width=1, color='#888')
             ),
-            name=f'Cluster {community_id + 1}'
+            name=f'Cluster {community_id + 1}',
+            customdata=[community_id] * len(node_x),  # Add community ID as custom data
+            selectedpoints=[],  # Enable selection
+            selected=dict(
+                marker=dict(
+                    size=20,
+                    color='red',
+                    line=dict(width=3, color='darkred')
+                )
+            ),
+            unselected=dict(
+                marker=dict(
+                    size=15,
+                    opacity=0.3
+                )
+            )
         )
         
         node_traces.append(node_trace)
@@ -194,6 +216,24 @@ def main():
     This visualization shows how nodes in a network form tightly knit groups or communities based on their connections.
     Nodes are colored by their detected community, and sized based on their number of connections.
     """)
+    
+    # Add weight threshold slider in sidebar
+    st.sidebar.title("Visualization Controls")
+    weight_threshold = st.sidebar.slider(
+        "Link Weight Threshold",
+        min_value=0.0,
+        max_value=5.0,
+        value=0.0,
+        step=0.1,
+        help="Filter links with weight below this threshold"
+    )
+    
+    # Add cluster highlighting controls
+    highlight_cluster = st.sidebar.checkbox(
+        "Enable Cluster Highlighting",
+        value=True,
+        help="Click on nodes to highlight their cluster"
+    )
     
     # Data input selection
     data_source = st.radio(
@@ -228,8 +268,19 @@ def main():
         # Detect communities
         communities = detect_communities(G)
         
-        # Create and display the visualization
-        fig = create_plotly_figure(G, communities)
+        
+        # Create and display the visualization with weight threshold
+        fig = create_plotly_figure(G, communities, weight_threshold)
+        
+        # Add click event handler for cluster highlighting
+        if highlight_cluster:
+            fig.update_traces(
+                marker=dict(
+                    size=15,
+                    line=dict(width=2, color='DarkSlateGrey')
+                ),
+                selector=dict(mode='markers')
+            )
         st.plotly_chart(fig, use_container_width=True)
         
         # Display statistics in the sidebar
