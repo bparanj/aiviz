@@ -1,0 +1,56 @@
+{
+  "test_cases": [
+    {
+      "name": "valid_case",
+      "data": {
+        "nodes": [
+          { "id": "Person1", "label": "Alice" },
+          { "id": "Person2", "label": "Bob" },
+          { "id": "City1", "label": "Berlin" }
+        ],
+        "links": [
+          { "source": "Person1", "target": "Person2", "type": "friends" },
+          { "source": "Person1", "target": "City1", "type": "lives_in" }
+        ]
+      },
+      "expected_valid": true,
+      "description": "Valid knowledge graph with proper nodes and links"
+    },
+    {
+      "name": "duplicate_node_ids",
+      "data": {
+        "nodes": [
+          { "id": "Person1", "label": "Alice" },
+          { "id": "Person1", "label": "Bob" }
+        ],
+        "links": []
+      },
+      "expected_valid": false,
+      "description": "Invalid due to duplicate node IDs"
+    },
+    {
+      "name": "invalid_link_reference",
+      "data": {
+        "nodes": [
+          { "id": "Person1", "label": "Alice" }
+        ],
+        "links": [
+          { "source": "Person1", "target": "NonExistent", "type": "knows" }
+        ]
+      },
+      "expected_valid": false,
+      "description": "Invalid due to link referencing non-existent node"
+    },
+    {
+      "name": "insufficient_nodes",
+      "data": {
+        "nodes": [
+          { "id": "Person1", "label": "Alice" }
+        ],
+        "links": []
+      },
+      "expected_valid": false,
+      "description": "Invalid due to insufficient number of nodes"
+    }
+  ]
+}
