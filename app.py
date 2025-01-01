@@ -43,6 +43,8 @@ Welcome to the Machine Learning Visualization Dashboard! This application provid
 - **Graph Clustering**: Explore community structures in networks
 - **Node Influence**: Analyze node importance and centrality
 - **Neural Network Topology**: Visualize neural network architecture and weights
+- **Data Pipeline Flow**: Visualize data transformations and flow in ML pipelines
+- **Feature Extraction**: Explore how raw data transforms into different features
 
 Use the sidebar to navigate between different visualizations. Each visualization supports custom data input via JSON format.
 """)
