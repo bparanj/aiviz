@@ -45,6 +45,7 @@ Welcome to the Machine Learning Visualization Dashboard! This application provid
 - **Neural Network Topology**: Visualize neural network architecture and weights
 - **Data Pipeline Flow**: Visualize data transformations and flow in ML pipelines
 - **Feature Extraction**: Explore how raw data transforms into different features
+- **Model Input/Output Distribution**: Visualize data flow through model components and outputs
 
 Use the sidebar to navigate between different visualizations. Each visualization supports custom data input via JSON format.
 """)
