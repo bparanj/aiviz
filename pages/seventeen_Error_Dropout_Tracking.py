@@ -23,6 +23,7 @@ def validate_data(data: Dict[str, List[Dict[str, Any]]]) -> bool:
         return False
         
     node_ids = set()
+    has_discard_node = False
     for node in nodes:
         if not isinstance(node, dict):
             return False
@@ -33,12 +34,15 @@ def validate_data(data: Dict[str, List[Dict[str, Any]]]) -> bool:
         if node["id"] in node_ids:
             return False
         node_ids.add(node["id"])
+        if node["name"] == "Discarded":
+            has_discard_node = True
             
     # Check links format
     links = data["links"]
     if not isinstance(links, list):
         return False
         
+    has_dropout_path = False
     for link in links:
         if not isinstance(link, dict):
             return False
@@ -48,6 +52,14 @@ def validate_data(data: Dict[str, List[Dict[str, Any]]]) -> bool:
             return False
         if not isinstance(link["value"], (int, float)) or link["value"] < 0:
             return False
+        # Check if this link leads to a discard node
+        for node in nodes:
+            if node["id"] == link["target"] and node["name"] == "Discarded":
+                has_dropout_path = True
+                
+    # Ensure there's at least one dropout path
+    if not has_discard_node or not has_dropout_path:
+        return False
             
     return True
 
