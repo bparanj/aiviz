@@ -1,15 +1,9 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="Home - ML Visualization Dashboard",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-st.title("ML Visualization Dashboard")
-
-st.markdown("""
+def main():
+    st.title("ML Visualization Dashboard")
+    
+    st.markdown("""
 Welcome to the Machine Learning Visualization Dashboard! This application provides interactive visualizations for:
 
 - **Hyperparameter Impact**: Analyze how different hyperparameter settings affect model performance
@@ -28,3 +22,6 @@ st.sidebar.markdown("""
 ### About
 This dashboard combines multiple ML visualization tools to help you better understand your models and data.
 """)
+
+if __name__ == "__main__":
+    main()
