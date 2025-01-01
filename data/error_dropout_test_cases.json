@@ -1,0 +1,107 @@
+{
+  "valid_cases": [
+    {
+      "description": "Basic valid pipeline with dropouts",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Processing" },
+          { "id": 2, "name": "Final" },
+          { "id": 3, "name": "Discarded" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 1000 },
+          { "source": 1, "target": 2, "value": 800 },
+          { "source": 1, "target": 3, "value": 200 }
+        ]
+      }
+    },
+    {
+      "description": "Complex pipeline with multiple dropout points",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Cleaning" },
+          { "id": 2, "name": "Feature Engineering" },
+          { "id": 3, "name": "Training" },
+          { "id": 4, "name": "Final" },
+          { "id": 5, "name": "Discarded" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 10000 },
+          { "source": 1, "target": 2, "value": 9000 },
+          { "source": 1, "target": 5, "value": 1000 },
+          { "source": 2, "target": 3, "value": 8000 },
+          { "source": 2, "target": 5, "value": 1000 },
+          { "source": 3, "target": 4, "value": 7500 },
+          { "source": 3, "target": 5, "value": 500 }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "description": "Duplicate node IDs",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 0, "name": "Processing" },
+          { "id": 1, "name": "Final" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      }
+    },
+    {
+      "description": "Invalid source reference",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Final" }
+        ],
+        "links": [
+          { "source": 2, "target": 1, "value": 100 }
+        ]
+      }
+    },
+    {
+      "description": "Negative value",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Final" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": -100 }
+        ]
+      }
+    },
+    {
+      "description": "No dropout paths",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Processing" },
+          { "id": 2, "name": "Final" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 },
+          { "source": 1, "target": 2, "value": 100 }
+        ]
+      }
+    },
+    {
+      "description": "Missing required fields",
+      "data": {
+        "nodes": [
+          { "name": "Raw Data" },
+          { "id": 1 }
+        ],
+        "links": [
+          { "source": 0, "target": 1 }
+        ]
+      }
+    }
+  ]
+}
