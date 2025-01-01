@@ -10,27 +10,60 @@ def load_sample_data() -> List[Dict[str, Union[int, str, float]]]:
     with open("data/resource_consumption_sample.json", "r") as f:
         return json.load(f)
 
-def validate_data(data: List[Dict[str, Union[int, str, float]]]) -> bool:
-    """Validate the input data format."""
-    if not isinstance(data, list) or len(data) < 1:
-        return False
+def validate_data(data: List[Dict[str, Union[int, str, float]]]) -> tuple[bool, str]:
+    """Validate the input data format.
+    
+    Returns:
+        tuple[bool, str]: (is_valid, error_message)
+    """
+    if not isinstance(data, list):
+        return False, "Input must be a list of pipeline stages"
+    
+    if len(data) < 1:
+        return False, "At least one pipeline stage is required"
+        
+    if len(data) < 2:
+        return False, "At least two pipeline stages are recommended for meaningful comparison"
     
     ids = set()
-    for item in data:
+    for idx, item in enumerate(data):
         if not isinstance(item, dict):
-            return False
-        if "id" not in item or "name" not in item or ("time" not in item and "compute" not in item):
-            return False
+            return False, f"Stage {idx} must be a dictionary"
+            
+        # Check required fields
+        if "id" not in item or "name" not in item:
+            return False, f"Stage {idx} missing required fields 'id' and 'name'"
+        if "time" not in item and "compute" not in item:
+            return False, f"Stage {idx} must have either 'time' or 'compute' metric"
+            
+        # Validate ID
+        if not isinstance(item["id"], int):
+            return False, f"Stage {idx} ID must be an integer, got {type(item['id']).__name__}"
         if item["id"] in ids:
-            return False
+            return False, f"Duplicate stage ID found: {item['id']}"
         ids.add(item["id"])
+        
+        # Validate name
+        if not isinstance(item["name"], str):
+            return False, f"Stage {idx} name must be a string"
+        if not item["name"].strip():
+            return False, f"Stage {idx} name cannot be empty"
+            
+        # Validate metrics
         time_val = item.get("time", 0)
         compute_val = item.get("compute", 0)
-        if not isinstance(time_val, (int, float)) or not isinstance(compute_val, (int, float)):
-            return False
-        if float(time_val) < 0 or float(compute_val) < 0:
-            return False
-    return True
+        
+        if not isinstance(time_val, (int, float)):
+            return False, f"Stage {idx} time value must be a number"
+        if not isinstance(compute_val, (int, float)):
+            return False, f"Stage {idx} compute value must be a number"
+            
+        if float(time_val) < 0:
+            return False, f"Stage {idx} time value must be non-negative"
+        if float(compute_val) < 0:
+            return False, f"Stage {idx} compute value must be non-negative"
+            
+    return True, ""
 
 def create_resource_chart(data: List[Dict[str, Union[int, str, float]]], metric: str = "time") -> go.Figure:
     """Create a horizontal bar chart showing resource consumption."""
@@ -96,7 +129,8 @@ def main():
                 st.error("Invalid JSON format")
     
     if data:
-        if validate_data(data):
+        is_valid, error_msg = validate_data(data)
+        if is_valid:
             # Select metric to visualize
             metric = st.selectbox(
                 "Select metric to visualize:",
@@ -123,7 +157,8 @@ def main():
                 st.metric("Average Compute", f"{df['compute'].mean():.1f}%")
                 st.metric("Highest Compute Stage", f"{df.loc[df['compute'].idxmax(), 'name']}")
         else:
-            st.error("Invalid data format. Please check the documentation for the required format.")
+            st.error(f"Invalid data format: {error_msg}")
+            st.info("Please check the documentation below for the required format.")
     
     # Documentation
     with st.expander("Data Format Documentation"):
