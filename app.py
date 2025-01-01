@@ -39,6 +39,10 @@ Welcome to the Machine Learning Visualization Dashboard! This application provid
 - **Feature-Feature Interactions**: Explore relationships between different features
 - **Pairwise Similarity**: Compare similarities between different samples
 - **Knowledge Graph**: Visualize relationships between entities
+- **Relationship Inference**: Analyze direct and indirect relationships in data
+- **Graph Clustering**: Explore community structures in networks
+- **Node Influence**: Analyze node importance and centrality
+- **Neural Network Topology**: Visualize neural network architecture and weights
 
 Use the sidebar to navigate between different visualizations. Each visualization supports custom data input via JSON format.
 """)
