@@ -8,7 +8,17 @@ project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 # Import validate_data from the correct module
-from pages.nine_Relationship_Inference import validate_data
+import sys
+from pathlib import Path
+
+# Add the project root to the Python path
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
+
+# Import validate_data from the correct module
+import importlib
+module = importlib.import_module("pages.9_Relationship_Inference")
+validate_data = module.validate_data
 
 def load_test_cases():
     """Load test cases from JSON file."""
