@@ -7,6 +7,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Hide default menu and rename navigation
+hide_default_format = """
+       <style>
+       #MainMenu {visibility: hidden; }
+       footer {visibility: hidden;}
+       div[data-testid="stSidebarNav"] > div:nth-child(1) > button:nth-child(1) {display: none;}
+       div[data-testid="stSidebarNav"] ul {margin-top: -1rem;}
+       div[data-testid="stSidebarNav"] ul li:first-child {display: none;}
+       div[data-testid="stSidebarNav"] ul li:nth-child(2)::before {
+           content: "Home";
+           margin-left: 0.5rem;
+           color: rgb(49, 51, 63);
+           font-size: 14px;
+       }
+       div[data-testid="stSidebarNav"] ul li:nth-child(2) a {display: none;}
+       </style>
+"""
+st.markdown(hide_default_format, unsafe_allow_html=True)
+
 st.title("ML Visualization Dashboard")
 
 st.markdown("""
