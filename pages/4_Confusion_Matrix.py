@@ -2,7 +2,9 @@ import streamlit as st
 import plotly.graph_objects as go
 from utils.data_validation import load_json_data, validate_confusion_matrix
 
-st.title("Confusion Matrix Visualization")
+st.set_page_config(page_title="Confusion Matrix", page_icon="🎯")
+
+st.title("Confusion Matrix")
 st.write("Visualize classification model performance across different classes")
 
 # Sample data

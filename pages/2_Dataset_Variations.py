@@ -5,7 +5,7 @@ from utils.data_validation import validate_dataset_variations, load_json_data
 
 st.set_page_config(page_title="Dataset Variations", page_icon="📊")
 
-st.title("Dataset Variations Visualization")
+st.title("Dataset Variations")
 
 # Sample data
 sample_data = [
