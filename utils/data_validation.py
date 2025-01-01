@@ -286,6 +286,29 @@ def validate_pairwise_similarity(data):
     except Exception as e:
         return False, f"Unexpected error during validation: {str(e)}"
 
+def validate_json_structure(data, required_fields=None):
+    """
+    Validate that the input data is a dictionary and contains required fields of specified types.
+    
+    Args:
+        data: The data to validate
+        required_fields: Optional dictionary mapping field names to their required types
+        
+    Returns:
+        bool: True if validation passes, False otherwise
+    """
+    if not isinstance(data, dict):
+        return False
+        
+    if required_fields:
+        for field, field_type in required_fields.items():
+            if field not in data:
+                return False
+            if not isinstance(data[field], field_type):
+                return False
+                
+    return True
+
 def load_json_data(json_str):
     """Load and parse JSON data."""
     try:
