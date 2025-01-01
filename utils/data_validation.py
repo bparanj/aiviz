@@ -210,6 +210,82 @@ def validate_feature_interactions(data):
     except Exception as e:
         return False, f"Error validating data: {str(e)}"
 
+def validate_pairwise_similarity(data):
+    """
+    Validate pairwise similarity data format and values.
+    
+    Args:
+        data (dict): Dictionary containing samples and similarity matrix
+        
+    Returns:
+        tuple: (bool, str) - (is_valid, error_message)
+        
+    Validation rules:
+    1. Data must be a dictionary with 'samples' and 'matrix' keys
+    2. Samples must be a list with at least 2 items
+    3. Matrix must be square with dimensions matching samples length
+    4. Matrix values must be between 0.0 and 1.0
+    5. Diagonal values must be 1.0 (self-similarity)
+    """
+    try:
+        # Check data type
+        if not isinstance(data, dict):
+            return False, "Invalid data format: Expected a dictionary with 'samples' and 'matrix' keys"
+        
+        # Check required keys
+        if "samples" not in data or "matrix" not in data:
+            return False, "Missing required keys: Both 'samples' and 'matrix' must be present"
+        
+        samples = data["samples"]
+        matrix = data["matrix"]
+        
+        # Validate samples
+        if not isinstance(samples, list):
+            return False, "Invalid samples format: Expected a list of sample identifiers"
+            
+        if len(samples) < 2:
+            return False, "Insufficient samples: Need at least 2 samples for meaningful comparison"
+            
+        # Check for duplicate samples
+        if len(samples) != len(set(samples)):
+            return False, "Invalid samples: Contains duplicate sample identifiers"
+            
+        # Validate matrix structure
+        if not isinstance(matrix, list):
+            return False, "Invalid matrix format: Expected a list of lists"
+            
+        if len(matrix) != len(samples):
+            return False, f"Matrix dimension mismatch: Expected {len(samples)} rows, got {len(matrix)}"
+            
+        # Validate matrix values and symmetry
+        for i, row in enumerate(matrix):
+            if not isinstance(row, list):
+                return False, f"Invalid matrix row {i}: Expected a list"
+                
+            if len(row) != len(samples):
+                return False, f"Matrix row {i} dimension mismatch: Expected {len(samples)} columns, got {len(row)}"
+                
+            for j, val in enumerate(row):
+                # Check numeric values
+                if not isinstance(val, (int, float)):
+                    return False, f"Invalid value at position ({i},{j}): Expected a number, got {type(val).__name__}"
+                    
+                # Check value range
+                if val < 0.0 or val > 1.0:
+                    return False, f"Invalid similarity value at position ({i},{j}): {val} - Must be between 0.0 and 1.0"
+                    
+                # Check symmetry
+                if matrix[j][i] != val:
+                    return False, f"Matrix not symmetric: Value at ({i},{j}) differs from ({j},{i})"
+                    
+                # Check diagonal values
+                if i == j and val != 1.0:
+                    return False, f"Invalid self-similarity at position ({i},{i}): Must be 1.0"
+                
+        return True, "Valid pairwise similarity data"
+    except Exception as e:
+        return False, f"Unexpected error during validation: {str(e)}"
+
 def load_json_data(json_str):
     """Load and parse JSON data."""
     try:
