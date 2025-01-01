@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    { "id": 0, "name": "Raw Data" },
+    { "id": 1, "name": "Model Input Layer" },
+    { "id": 2, "name": "Model Hidden Module" },
+    { "id": 3, "name": "Model Output Layer" },
+    { "id": 4, "name": "Post-Processing" },
+    { "id": 5, "name": "Evaluation" }
+  ],
+  "links": [
+    { "source": 0, "target": 1, "value": 1000 },
+    { "source": 1, "target": 2, "value": 1000 },
+    { "source": 2, "target": 3, "value": 1000 },
+    { "source": 3, "target": 4, "value": 800 },
+    { "source": 3, "target": 5, "value": 200 }
+  ]
+}
