@@ -47,6 +47,7 @@ Welcome to the Machine Learning Visualization Dashboard! This application provid
 - **Feature Extraction**: Explore how raw data transforms into different features
 - **Model Input/Output Distribution**: Visualize data flow through model components and outputs
 - **Resource Consumption**: Analyze time and compute resource usage across pipeline stages
+- **Error/Dropout Tracking**: Visualize data sample flow and identify where samples are dropped in the pipeline
 
 Use the sidebar to navigate between different visualizations. Each visualization supports custom data input via JSON format.
 """)
