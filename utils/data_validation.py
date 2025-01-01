@@ -176,6 +176,40 @@ def validate_attention_map_data(data):
     except Exception as e:
         return False, f"Error validating data: {str(e)}"
 
+def validate_feature_interactions(data):
+    """Validate feature interactions data format and values."""
+    try:
+        if not isinstance(data, dict):
+            return False, "Data must be a dictionary"
+        
+        if "features" not in data or "matrix" not in data:
+            return False, "Data must contain 'features' and 'matrix' keys"
+        
+        features = data["features"]
+        matrix = data["matrix"]
+        
+        if not isinstance(features, list) or len(features) < 2:
+            return False, "Features must be a list with at least 2 features"
+            
+        if not isinstance(matrix, list):
+            return False, "Matrix must be a list"
+            
+        if len(features) != len(matrix):
+            return False, "Number of features must match matrix dimensions"
+            
+        for row in matrix:
+            if len(row) != len(features):
+                return False, "Matrix must be square"
+            for val in row:
+                if not isinstance(val, (int, float)):
+                    return False, "Matrix values must be numbers"
+                if val < 0 or val > 1:
+                    return False, "Matrix values must be between 0 and 1"
+                    
+        return True, "Valid feature interactions data"
+    except Exception as e:
+        return False, f"Error validating data: {str(e)}"
+
 def load_json_data(json_str):
     """Load and parse JSON data."""
     try:
