@@ -232,7 +232,7 @@ def create_plotly_figure(G, pos=None, selected_node=None):
         data=data,
         layout=go.Layout(
             title=dict(
-                text='Node Influence Network',
+                text='11. Node Influence',
                 x=0.5,
                 y=0.95,
                 xanchor='center',
