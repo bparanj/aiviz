@@ -5,50 +5,75 @@ from typing import Dict, List, Union
 import os
 
 def validate_node(node: Dict, is_root: bool = False) -> List[str]:
-    """Validate a single node in the feature hierarchy."""
+    """Validate a single node in the feature hierarchy.
+    
+    Args:
+        node: Dictionary containing node data with name, count, and optional children
+        is_root: Boolean indicating if this is the root node
+        
+    Returns:
+        List of validation error messages
+    """
     errors = []
     
-    # Check required fields
-    if not isinstance(node.get('name'), str) or not node['name'].strip():
-        errors.append(f"Node must have a non-empty string name")
+    # Basic node structure validation
+    if not isinstance(node, dict):
+        return ["Node must be a dictionary"]
     
-    # Validate count field exists and is correct type
+    # Name validation
+    node_name = node.get('name', '')
+    if 'name' not in node or not isinstance(node_name, str) or (isinstance(node_name, str) and not node_name.strip()):
+        errors.append("Node must have a non-empty string name")
+    
+    # Get node name for error messages
+    display_name = node_name if isinstance(node_name, str) and node_name.strip() else "Unknown"
+    
+    # Count validation
+    count_error = "must have a non-negative integer count"
     if 'count' not in node:
-        errors.append(f"Node '{node.get('name', 'Unknown')}' must have a count field")
+        errors.append(count_error)
+        node['count'] = 0  # Set default count to prevent further errors
     else:
         try:
             count = int(node['count'])
             if count < 0:
-                errors.append(f"Node '{node.get('name', 'Unknown')}' must have a non-negative count")
+                errors.append(count_error)
             node['count'] = count  # Convert to int if it was a string number
         except (ValueError, TypeError):
-            errors.append(f"Node '{node.get('name', 'Unknown')}' count must be a valid integer")
+            errors.append(count_error)
+            node['count'] = 0  # Set default count to prevent further errors
     
-    # Check children if present
+    # Children validation
+    child_count = 0
     if 'children' in node:
         if not isinstance(node['children'], list):
-            errors.append(f"Node '{node['name']}' children must be an array")
+            errors.append(f"Node '{display_name}' children must be an array")
         else:
-            child_count = 0
             for child in node['children']:
                 errors.extend(validate_node(child))
-                if 'count' in child:
-                    try:
-                        child_count += int(child['count'])
-                    except (ValueError, TypeError):
-                        pass  # Error will be caught in child validation
-            
-            # Optional: Verify count matches children
-            if 'count' in node:
                 try:
-                    node_count = int(node['count'])
-                    if child_count > node_count:
-                        errors.append(f"Node '{node['name']}' count ({node_count}) is less than sum of children ({child_count})")
+                    child_count += int(child.get('count', 0))
                 except (ValueError, TypeError):
-                    pass  # Error already caught above in count validation
+                    pass  # Error will be caught in child validation
+            
+            # Hierarchy consistency validation
+            try:
+                node_count = int(node.get('count', 0))
+                if child_count > node_count:
+                    errors.append(
+                        f"Node '{display_name}' count ({node_count}) is less than sum of children ({child_count})"
+                    )
+            except (ValueError, TypeError):
+                pass  # Error already caught above in count validation
     
-    return errors
-                errors.append(f"Node '{node['name']}' count ({node['count']}) is less than sum of children ({child_count})")
+    # Root node specific validation
+    if is_root:
+        if not isinstance(node_name, str) or not node_name.strip():
+            errors.append("Node must have a non-empty string name")
+        if not isinstance(node.get('children'), list):
+            errors.append("Root node must have a children array")
+        elif not node.get('children', []):
+            errors.append("Root node must have at least one child")
     
     return errors
 
