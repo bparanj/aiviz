@@ -1,0 +1,16 @@
+{
+  "nodes": [
+    { "id": "NodeA", "label": "Alice" },
+    { "id": "NodeB", "label": "Bob" },
+    { "id": "NodeC", "label": "Charlie" },
+    { "id": "NodeD", "label": "Diana" },
+    { "id": "NodeE", "label": "Eve" },
+    { "id": "NodeF", "label": "Frank" }
+  ],
+  "links": [
+    { "source": "NodeA", "target": "NodeB", "type": "friend" },
+    { "source": "NodeB", "target": "NodeC", "type": "colleague" },
+    { "source": "NodeC", "target": "NodeE", "type": "mentor" },
+    { "source": "NodeE", "target": "NodeF", "type": "collaborator" }
+  ]
+}

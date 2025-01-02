@@ -1,0 +1,62 @@
+{
+  "layers": [
+    {
+      "layerIndex": 0,
+      "layerType": "input",
+      "nodes": [
+        { "id": "in_1" },
+        { "id": "in_2" },
+        { "id": "in_3" }
+      ]
+    },
+    {
+      "layerIndex": 1,
+      "layerType": "hidden",
+      "nodes": [
+        { "id": "h1_1" },
+        { "id": "h1_2" },
+        { "id": "h1_3" },
+        { "id": "h1_4" }
+      ]
+    },
+    {
+      "layerIndex": 2,
+      "layerType": "hidden",
+      "nodes": [
+        { "id": "h2_1" },
+        { "id": "h2_2" }
+      ]
+    },
+    {
+      "layerIndex": 3,
+      "layerType": "output",
+      "nodes": [
+        { "id": "out_1" }
+      ]
+    }
+  ],
+  "connections": [
+    { "source": "in_1", "target": "h1_1", "weight": 0.35 },
+    { "source": "in_1", "target": "h1_2", "weight": -0.25 },
+    { "source": "in_1", "target": "h1_3", "weight": 0.15 },
+    { "source": "in_1", "target": "h1_4", "weight": 0.45 },
+    { "source": "in_2", "target": "h1_1", "weight": -0.40 },
+    { "source": "in_2", "target": "h1_2", "weight": 0.50 },
+    { "source": "in_2", "target": "h1_3", "weight": 0.30 },
+    { "source": "in_2", "target": "h1_4", "weight": -0.35 },
+    { "source": "in_3", "target": "h1_1", "weight": 0.25 },
+    { "source": "in_3", "target": "h1_2", "weight": 0.45 },
+    { "source": "in_3", "target": "h1_3", "weight": -0.20 },
+    { "source": "in_3", "target": "h1_4", "weight": 0.55 },
+    { "source": "h1_1", "target": "h2_1", "weight": 0.65 },
+    { "source": "h1_1", "target": "h2_2", "weight": -0.40 },
+    { "source": "h1_2", "target": "h2_1", "weight": 0.30 },
+    { "source": "h1_2", "target": "h2_2", "weight": 0.55 },
+    { "source": "h1_3", "target": "h2_1", "weight": -0.25 },
+    { "source": "h1_3", "target": "h2_2", "weight": 0.45 },
+    { "source": "h1_4", "target": "h2_1", "weight": 0.50 },
+    { "source": "h1_4", "target": "h2_2", "weight": 0.35 },
+    { "source": "h2_1", "target": "out_1", "weight": 0.75 },
+    { "source": "h2_2", "target": "out_1", "weight": -0.60 }
+  ]
+}
