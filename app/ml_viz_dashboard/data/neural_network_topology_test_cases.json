@@ -1,0 +1,89 @@
+{
+    "valid_case": {
+        "layers": [
+            {
+                "layerIndex": 0,
+                "layerType": "input",
+                "nodes": [
+                    {"id": "in_1"},
+                    {"id": "in_2"}
+                ]
+            },
+            {
+                "layerIndex": 1,
+                "layerType": "hidden",
+                "nodes": [
+                    {"id": "h1_1"},
+                    {"id": "h1_2"}
+                ]
+            },
+            {
+                "layerIndex": 2,
+                "layerType": "output",
+                "nodes": [
+                    {"id": "out_1"}
+                ]
+            }
+        ],
+        "connections": [
+            {"source": "in_1", "target": "h1_1", "weight": 0.25},
+            {"source": "in_1", "target": "h1_2", "weight": 0.75},
+            {"source": "in_2", "target": "h1_1", "weight": -0.35},
+            {"source": "in_2", "target": "h1_2", "weight": 0.45},
+            {"source": "h1_1", "target": "out_1", "weight": 1.5},
+            {"source": "h1_2", "target": "out_1", "weight": -0.8}
+        ]
+    },
+    "invalid_cases": {
+        "missing_layers": {
+            "connections": []
+        },
+        "invalid_layer_index": {
+            "layers": [
+                {
+                    "layerIndex": "0",
+                    "nodes": [{"id": "in_1"}]
+                }
+            ],
+            "connections": []
+        },
+        "duplicate_node_ids": {
+            "layers": [
+                {
+                    "layerIndex": 0,
+                    "nodes": [
+                        {"id": "node1"},
+                        {"id": "node1"}
+                    ]
+                }
+            ],
+            "connections": []
+        },
+        "invalid_connection": {
+            "layers": [
+                {
+                    "layerIndex": 0,
+                    "nodes": [{"id": "node1"}]
+                }
+            ],
+            "connections": [
+                {"source": "node1", "target": "nonexistent"}
+            ]
+        },
+        "invalid_weight": {
+            "layers": [
+                {
+                    "layerIndex": 0,
+                    "nodes": [{"id": "node1"}]
+                },
+                {
+                    "layerIndex": 1,
+                    "nodes": [{"id": "node2"}]
+                }
+            ],
+            "connections": [
+                {"source": "node1", "target": "node2", "weight": "0.5"}
+            ]
+        }
+    }
+}

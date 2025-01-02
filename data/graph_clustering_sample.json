@@ -1,0 +1,21 @@
+{
+  "nodes": [
+    { "id": "NodeA", "label": "Alice" },
+    { "id": "NodeB", "label": "Bob" },
+    { "id": "NodeC", "label": "Charlie" },
+    { "id": "NodeD", "label": "Diana" },
+    { "id": "NodeE", "label": "Eve" },
+    { "id": "NodeF", "label": "Frank" },
+    { "id": "NodeG", "label": "Grace" },
+    { "id": "NodeH", "label": "Henry" }
+  ],
+  "links": [
+    { "source": "NodeA", "target": "NodeB", "weight": 5 },
+    { "source": "NodeB", "target": "NodeC", "weight": 4 },
+    { "source": "NodeA", "target": "NodeC", "weight": 3 },
+    { "source": "NodeD", "target": "NodeE", "weight": 5 },
+    { "source": "NodeE", "target": "NodeF", "weight": 4 },
+    { "source": "NodeD", "target": "NodeF", "weight": 3 },
+    { "source": "NodeG", "target": "NodeH", "weight": 5 }
+  ]
+}

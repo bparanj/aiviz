@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    { "id": "NodeA", "label": "Alice", "influence": 0.85 },
+    { "id": "NodeB", "label": "Bob", "influence": 0.40 },
+    { "id": "NodeC", "label": "Carol", "influence": 0.60 },
+    { "id": "NodeD", "label": "Derek", "influence": 0.20 },
+    { "id": "NodeE", "label": "Eve", "influence": 0.75 }
+  ],
+  "links": [
+    { "source": "NodeA", "target": "NodeB", "weight": 2 },
+    { "source": "NodeB", "target": "NodeC", "weight": 1 },
+    { "source": "NodeC", "target": "NodeA", "weight": 3 },
+    { "source": "NodeC", "target": "NodeD", "weight": 1 },
+    { "source": "NodeA", "target": "NodeE", "weight": 2 },
+    { "source": "NodeE", "target": "NodeC", "weight": 2 }
+  ]
+}

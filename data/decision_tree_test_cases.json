@@ -1,0 +1,94 @@
+{
+  "test_cases": {
+    "valid": {
+      "basic_tree": {
+        "name": "Root",
+        "condition": "Age < 30",
+        "samples": 100,
+        "children": [
+          {
+            "name": "Left Subtree",
+            "condition": "Income >= 50k",
+            "samples": 60,
+            "children": [
+              {
+                "name": "Leaf: Approved",
+                "condition": "Output = Approved",
+                "samples": 40
+              },
+              {
+                "name": "Leaf: Denied",
+                "condition": "Output = Denied",
+                "samples": 20
+              }
+            ]
+          },
+          {
+            "name": "Right Subtree",
+            "condition": "Income < 50k",
+            "samples": 40,
+            "children": [
+              {
+                "name": "Leaf: Denied",
+                "condition": "Output = Denied",
+                "samples": 40
+              }
+            ]
+          }
+        ]
+      },
+      "single_node": {
+        "name": "Root Only",
+        "condition": "Feature > 5",
+        "samples": 50
+      },
+      "empty_children": {
+        "name": "Root",
+        "condition": "X > 0",
+        "samples": 100,
+        "children": []
+      }
+    },
+    "invalid": {
+      "missing_name": {
+        "condition": "Age < 30",
+        "samples": 100
+      },
+      "empty_condition": {
+        "name": "Root",
+        "condition": "",
+        "samples": 100
+      },
+      "negative_samples": {
+        "name": "Root",
+        "condition": "Age < 30",
+        "samples": -10
+      },
+      "invalid_children_type": {
+        "name": "Root",
+        "condition": "Age < 30",
+        "samples": 100,
+        "children": "not an array"
+      },
+      "invalid_child_object": {
+        "name": "Root",
+        "condition": "Age < 30",
+        "samples": 100,
+        "children": [
+          "not an object"
+        ]
+      },
+      "missing_required_in_child": {
+        "name": "Root",
+        "condition": "Age < 30",
+        "samples": 100,
+        "children": [
+          {
+            "name": "Child",
+            "samples": 50
+          }
+        ]
+      }
+    }
+  }
+}

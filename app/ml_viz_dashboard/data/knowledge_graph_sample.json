@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    { "id": "Person1", "label": "Alice" },
+    { "id": "Person2", "label": "Bob" },
+    { "id": "Person3", "label": "Charlie" },
+    { "id": "City1", "label": "Berlin" },
+    { "id": "City2", "label": "Paris" },
+    { "id": "Company1", "label": "TechCorp" }
+  ],
+  "links": [
+    { "source": "Person1", "target": "Person2", "type": "friends" },
+    { "source": "Person2", "target": "Person3", "type": "colleagues" },
+    { "source": "Person1", "target": "City1", "type": "lives_in" },
+    { "source": "Person2", "target": "City2", "type": "lives_in" },
+    { "source": "Person1", "target": "Company1", "type": "works_at" },
+    { "source": "Person2", "target": "Company1", "type": "works_at" },
+    { "source": "Person3", "target": "Company1", "type": "manages" }
+  ]
+}

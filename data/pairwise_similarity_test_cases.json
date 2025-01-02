@@ -1,0 +1,80 @@
+{
+    "test_cases": [
+        {
+            "name": "valid_case",
+            "data": {
+                "samples": ["Doc1", "Doc2", "Doc3", "Doc4"],
+                "matrix": [
+                    [1.00, 0.75, 0.10, 0.20],
+                    [0.75, 1.00, 0.15, 0.30],
+                    [0.10, 0.15, 1.00, 0.05],
+                    [0.20, 0.30, 0.05, 1.00]
+                ]
+            },
+            "expected_valid": true,
+            "description": "Valid case with proper structure and values"
+        },
+        {
+            "name": "invalid_not_symmetric",
+            "data": {
+                "samples": ["Doc1", "Doc2", "Doc3"],
+                "matrix": [
+                    [1.00, 0.75, 0.10],
+                    [0.80, 1.00, 0.15],
+                    [0.10, 0.15, 1.00]
+                ]
+            },
+            "expected_valid": false,
+            "description": "Invalid case: matrix not symmetric"
+        },
+        {
+            "name": "invalid_diagonal",
+            "data": {
+                "samples": ["Doc1", "Doc2"],
+                "matrix": [
+                    [0.95, 0.75],
+                    [0.75, 0.90]
+                ]
+            },
+            "expected_valid": false,
+            "description": "Invalid case: diagonal values not 1.0"
+        },
+        {
+            "name": "invalid_dimensions",
+            "data": {
+                "samples": ["Doc1", "Doc2", "Doc3"],
+                "matrix": [
+                    [1.00, 0.75],
+                    [0.75, 1.00]
+                ]
+            },
+            "expected_valid": false,
+            "description": "Invalid case: matrix dimensions don't match samples"
+        },
+        {
+            "name": "invalid_values",
+            "data": {
+                "samples": ["Doc1", "Doc2"],
+                "matrix": [
+                    [1.00, 1.20],
+                    [1.20, 1.00]
+                ]
+            },
+            "expected_valid": false,
+            "description": "Invalid case: similarity values > 1.0"
+        },
+        {
+            "name": "invalid_duplicate_samples",
+            "data": {
+                "samples": ["Doc1", "Doc1", "Doc2"],
+                "matrix": [
+                    [1.00, 0.75, 0.10],
+                    [0.75, 1.00, 0.15],
+                    [0.10, 0.15, 1.00]
+                ]
+            },
+            "expected_valid": false,
+            "description": "Invalid case: duplicate sample names"
+        }
+    ]
+}

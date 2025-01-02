@@ -1,0 +1,7 @@
+[
+  { "id": 0, "name": "Data Ingestion",   "time": 60,   "compute": 25 },
+  { "id": 1, "name": "Data Cleaning",    "time": 120,  "compute": 40 },
+  { "id": 2, "name": "Feature Extract",  "time": 90,   "compute": 60 },
+  { "id": 3, "name": "Model Training",   "time": 300,  "compute": 85 },
+  { "id": 4, "name": "Evaluation",       "time": 60,   "compute": 30 }
+]

@@ -1,0 +1,105 @@
+{
+  "valid_cases": [
+    {
+      "description": "Basic valid pipeline",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Processed" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      }
+    },
+    {
+      "description": "Complex pipeline with branches",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Cleaning" },
+          { "id": 2, "name": "Feature Engineering" },
+          { "id": 3, "name": "Filtered Out" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 1000 },
+          { "source": 1, "target": 2, "value": 800 },
+          { "source": 1, "target": 3, "value": 200 }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "description": "Missing nodes key",
+      "data": {
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      },
+      "expected_error": "Data must contain 'nodes' and 'links' keys"
+    },
+    {
+      "description": "Duplicate node IDs",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 0, "name": "Processed" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      },
+      "expected_error": "Node IDs must be unique"
+    },
+    {
+      "description": "Invalid node reference in links",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Processed" }
+        ],
+        "links": [
+          { "source": 0, "target": 2, "value": 100 }
+        ]
+      },
+      "expected_error": "Link source and target must reference valid node IDs"
+    },
+    {
+      "description": "Negative link value",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" },
+          { "id": 1, "name": "Processed" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": -100 }
+        ]
+      },
+      "expected_error": "Link value must be a non-negative number"
+    },
+    {
+      "description": "Single node pipeline",
+      "data": {
+        "nodes": [
+          { "id": 0, "name": "Raw Data" }
+        ],
+        "links": []
+      },
+      "expected_error": "Pipeline must have at least 2 nodes"
+    },
+    {
+      "description": "Non-integer node ID",
+      "data": {
+        "nodes": [
+          { "id": "0", "name": "Raw Data" },
+          { "id": 1, "name": "Processed" }
+        ],
+        "links": [
+          { "source": 0, "target": 1, "value": 100 }
+        ]
+      },
+      "expected_error": "Node 'id' must be an integer"
+    }
+  ]
+}

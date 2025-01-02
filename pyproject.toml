@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-viz-dashboard"
+version = "0.1.0"
+authors = [
+  { name = "ML Viz Team" },
+]
+description = "ML Visualization Dashboard with multiple interactive visualizations"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "streamlit>=1.24.0",
+    "plotly>=5.15.0",
+    "numpy>=1.24.0",
+    "networkx>=3.1",
+    "pandas>=2.0.0",
+    "scipy>=1.10.0",
+    "pytest>=7.0.0"
+]
+
+[tool.setuptools]
+packages = ["ml_viz_dashboard"]
+package-dir = {"ml_viz_dashboard" = "ml_viz_dashboard"}

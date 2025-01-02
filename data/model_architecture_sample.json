@@ -1,0 +1,75 @@
+{
+  "name": "OverallModel",
+  "type": "Ensemble",
+  "children": [
+    {
+      "name": "RandomForestModule",
+      "type": "RandomForest",
+      "children": [
+        {
+          "name": "DecisionTree1",
+          "type": "DecisionTree",
+          "children": []
+        },
+        {
+          "name": "DecisionTree2",
+          "type": "DecisionTree",
+          "children": []
+        },
+        {
+          "name": "DecisionTree3",
+          "type": "DecisionTree",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "NeuralNetworkModule",
+      "type": "NeuralNetwork",
+      "children": [
+        {
+          "name": "ConvolutionalBlock",
+          "type": "CNN Block",
+          "children": [
+            {
+              "name": "Conv2D_1",
+              "type": "Convolutional Layer",
+              "children": []
+            },
+            {
+              "name": "BatchNorm1",
+              "type": "Batch Normalization",
+              "children": []
+            },
+            {
+              "name": "ReLU1",
+              "type": "Activation",
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "DenseBlock",
+          "type": "Dense Block",
+          "children": [
+            {
+              "name": "Dense1",
+              "type": "Fully Connected Layer",
+              "children": []
+            },
+            {
+              "name": "Dropout1",
+              "type": "Dropout Layer",
+              "children": []
+            },
+            {
+              "name": "Dense2",
+              "type": "Fully Connected Layer",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

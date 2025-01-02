@@ -1,0 +1,55 @@
+{
+    "valid_cases": [
+        {
+            "name": "Basic 2x2",
+            "data": {
+                "classes": ["Positive", "Negative"],
+                "matrix": [
+                    [50, 10],
+                    [5, 35]
+                ]
+            }
+        },
+        {
+            "name": "Multi-class",
+            "data": {
+                "classes": ["Cat", "Dog", "Bird", "Fish"],
+                "matrix": [
+                    [45, 5, 3, 2],
+                    [4, 50, 6, 0],
+                    [2, 4, 38, 1],
+                    [1, 0, 2, 42]
+                ]
+            }
+        }
+    ],
+    "invalid_cases": [
+        {
+            "name": "Missing classes",
+            "data": {
+                "matrix": [[1, 2], [3, 4]]
+            }
+        },
+        {
+            "name": "Single class",
+            "data": {
+                "classes": ["Only"],
+                "matrix": [[10]]
+            }
+        },
+        {
+            "name": "Negative values",
+            "data": {
+                "classes": ["A", "B"],
+                "matrix": [[1, -2], [3, 4]]
+            }
+        },
+        {
+            "name": "Mismatched dimensions",
+            "data": {
+                "classes": ["A", "B", "C"],
+                "matrix": [[1, 2], [3, 4]]
+            }
+        }
+    ]
+}

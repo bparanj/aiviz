@@ -1,0 +1,113 @@
+{
+  "valid_cases": [
+    {
+      "name": "Basic Valid Case",
+      "data": {
+        "name": "Root",
+        "count": 100,
+        "children": []
+      },
+      "expected": true
+    },
+    {
+      "name": "Valid Nested Structure",
+      "data": {
+        "name": "All Categories",
+        "count": 1000,
+        "children": [
+          {
+            "name": "Category A",
+            "count": 500,
+            "children": [
+              {
+                "name": "Subcategory A1",
+                "count": 250,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": true
+    }
+  ],
+  "invalid_cases": [
+    {
+      "name": "Missing Name",
+      "data": {
+        "count": 100,
+        "children": []
+      },
+      "expected": false,
+      "error": "Node must have a non-empty name string"
+    },
+    {
+      "name": "Empty Name",
+      "data": {
+        "name": "",
+        "count": 100,
+        "children": []
+      },
+      "expected": false,
+      "error": "Node must have a non-empty name string"
+    },
+    {
+      "name": "Missing Count",
+      "data": {
+        "name": "Root",
+        "children": []
+      },
+      "expected": false,
+      "error": "Node must have a non-negative count"
+    },
+    {
+      "name": "Negative Count",
+      "data": {
+        "name": "Root",
+        "count": -10,
+        "children": []
+      },
+      "expected": false,
+      "error": "Node must have a non-negative count"
+    },
+    {
+      "name": "Missing Children Array",
+      "data": {
+        "name": "Root",
+        "count": 100
+      },
+      "expected": false,
+      "error": "Node must have a children array"
+    },
+    {
+      "name": "Invalid Children Type",
+      "data": {
+        "name": "Root",
+        "count": 100,
+        "children": "not an array"
+      },
+      "expected": false,
+      "error": "Node must have a children array"
+    },
+    {
+      "name": "Invalid Child Node",
+      "data": {
+        "name": "Root",
+        "count": 100,
+        "children": [
+          {
+            "name": "Valid Child",
+            "count": 50,
+            "children": []
+          },
+          {
+            "count": 50,
+            "children": []
+          }
+        ]
+      },
+      "expected": false,
+      "error": "Invalid child node: Node must have a non-empty name string"
+    }
+  ]
+}

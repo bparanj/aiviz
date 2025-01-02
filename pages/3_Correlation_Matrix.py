@@ -6,7 +6,7 @@ from utils.data_validation import validate_correlation_matrix, load_json_data
 
 st.set_page_config(page_title="Correlation Matrix", page_icon="🔄")
 
-st.title("Correlation Matrix Visualization")
+st.title("Correlation Matrix")
 
 # Sample data
 sample_data = {

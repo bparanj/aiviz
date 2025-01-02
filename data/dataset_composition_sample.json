@@ -1,0 +1,7 @@
+[
+  { "class": "Dog",  "count": 50 },
+  { "class": "Cat",  "count": 30 },
+  { "class": "Bird", "count": 5  },
+  { "class": "Fish", "count": 15 },
+  { "class": "Other", "count": 10 }
+]

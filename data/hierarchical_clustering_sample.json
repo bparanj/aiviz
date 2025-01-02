@@ -1,0 +1,38 @@
+{
+  "name": "Root Cluster",
+  "children": [
+    {
+      "name": "Cluster A",
+      "children": [
+        {
+          "name": "Point A1"
+        },
+        {
+          "name": "Point A2"
+        },
+        {
+          "name": "Subcluster A3",
+          "children": [
+            {
+              "name": "Point A3_1"
+            },
+            {
+              "name": "Point A3_2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cluster B",
+      "children": [
+        {
+          "name": "Point B1"
+        },
+        {
+          "name": "Point B2"
+        }
+      ]
+    }
+  ]
+}

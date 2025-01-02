@@ -1,0 +1,83 @@
+{
+  "test_cases": [
+    {
+      "name": "valid_basic",
+      "description": "Valid data with minimum required nodes",
+      "data": {
+        "nodes": [
+          { "id": "Node1", "label": "First" },
+          { "id": "Node2", "label": "Second" },
+          { "id": "Node3", "label": "Third" }
+        ],
+        "links": [
+          { "source": "Node1", "target": "Node2", "type": "direct" },
+          { "source": "Node2", "target": "Node3", "type": "indirect" }
+        ]
+      },
+      "expected": true
+    },
+    {
+      "name": "invalid_duplicate_id",
+      "description": "Invalid data with duplicate node ID",
+      "data": {
+        "nodes": [
+          { "id": "Node1", "label": "First" },
+          { "id": "Node1", "label": "Duplicate" },
+          { "id": "Node3", "label": "Third" }
+        ],
+        "links": [
+          { "source": "Node1", "target": "Node3" }
+        ]
+      },
+      "expected": false
+    },
+    {
+      "name": "invalid_missing_node",
+      "description": "Invalid data with link referencing non-existent node",
+      "data": {
+        "nodes": [
+          { "id": "Node1", "label": "First" },
+          { "id": "Node2", "label": "Second" },
+          { "id": "Node3", "label": "Third" }
+        ],
+        "links": [
+          { "source": "Node1", "target": "NonExistent" }
+        ]
+      },
+      "expected": false
+    },
+    {
+      "name": "invalid_too_few_nodes",
+      "description": "Invalid data with less than minimum required nodes",
+      "data": {
+        "nodes": [
+          { "id": "Node1", "label": "First" },
+          { "id": "Node2", "label": "Second" }
+        ],
+        "links": [
+          { "source": "Node1", "target": "Node2" }
+        ]
+      },
+      "expected": false
+    },
+    {
+      "name": "valid_complex",
+      "description": "Valid complex data with multiple paths and isolated nodes",
+      "data": {
+        "nodes": [
+          { "id": "A", "label": "Alice" },
+          { "id": "B", "label": "Bob" },
+          { "id": "C", "label": "Charlie" },
+          { "id": "D", "label": "Diana" },
+          { "id": "E", "label": "Eve" }
+        ],
+        "links": [
+          { "source": "A", "target": "B", "type": "friend" },
+          { "source": "B", "target": "C", "type": "colleague" },
+          { "source": "C", "target": "E", "type": "mentor" }
+        ]
+      },
+      "expected": true
+    }
+  ]
+}

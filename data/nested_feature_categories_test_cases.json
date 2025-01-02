@@ -1,0 +1,137 @@
+{
+  "valid_cases": [
+    {
+      "description": "Basic valid structure",
+      "data": {
+        "name": "All Features",
+        "count": 10,
+        "children": [
+          {
+            "name": "Category A",
+            "count": 5,
+            "children": []
+          },
+          {
+            "name": "Category B",
+            "count": 5,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "description": "Deep nested structure",
+      "data": {
+        "name": "Root",
+        "count": 15,
+        "children": [
+          {
+            "name": "Level 1",
+            "count": 10,
+            "children": [
+              {
+                "name": "Level 2",
+                "count": 5,
+                "children": [
+                  {
+                    "name": "Level 3",
+                    "count": 5,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "Level 2B",
+                "count": 5,
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Level 1B",
+            "count": 5,
+            "children": []
+          }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "description": "Missing name",
+      "data": {
+        "count": 10,
+        "children": []
+      },
+      "expected_errors": ["Node must have a non-empty string name"]
+    },
+    {
+      "description": "Empty name",
+      "data": {
+        "name": "",
+        "count": 10,
+        "children": []
+      },
+      "expected_errors": ["Node must have a non-empty string name"]
+    },
+    {
+      "description": "Missing count",
+      "data": {
+        "name": "Features",
+        "children": []
+      },
+      "expected_errors": ["Node 'Features' must have a non-negative integer count"]
+    },
+    {
+      "description": "Negative count",
+      "data": {
+        "name": "Features",
+        "count": -5,
+        "children": []
+      },
+      "expected_errors": ["Node 'Features' must have a non-negative integer count"]
+    },
+    {
+      "description": "Invalid children type",
+      "data": {
+        "name": "Features",
+        "count": 10,
+        "children": "not an array"
+      },
+      "expected_errors": ["Node 'Features' children must be an array"]
+    },
+    {
+      "description": "Child count exceeds parent",
+      "data": {
+        "name": "Parent",
+        "count": 5,
+        "children": [
+          {
+            "name": "Child",
+            "count": 10,
+            "children": []
+          }
+        ]
+      },
+      "expected_errors": ["Node 'Parent' count (5) is less than sum of children (10)"]
+    },
+    {
+      "description": "Non-string name",
+      "data": {
+        "name": 42,
+        "count": 10,
+        "children": []
+      },
+      "expected_errors": ["Node must have a non-empty string name"]
+    },
+    {
+      "description": "Non-integer count",
+      "data": {
+        "name": "Features",
+        "count": "ten",
+        "children": []
+      },
+      "expected_errors": ["Node 'Features' must have a non-negative integer count"]
+    }
+  ]
+}

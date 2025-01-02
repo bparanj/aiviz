@@ -1,0 +1,125 @@
+{
+  "name": "All Features",
+  "count": 100,
+  "children": [
+    {
+      "name": "Demographics",
+      "count": 35,
+      "children": [
+        {
+          "name": "Age Related",
+          "count": 15,
+          "children": [
+            {
+              "name": "Age Brackets",
+              "count": 8,
+              "children": []
+            },
+            {
+              "name": "Age Milestones",
+              "count": 7,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Location Related",
+          "count": 20,
+          "children": [
+            {
+              "name": "Geographic Coordinates",
+              "count": 5,
+              "children": []
+            },
+            {
+              "name": "Administrative Regions",
+              "count": 8,
+              "children": []
+            },
+            {
+              "name": "Population Density",
+              "count": 7,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financial Metrics",
+      "count": 40,
+      "children": [
+        {
+          "name": "Income",
+          "count": 20,
+          "children": [
+            {
+              "name": "Salary Components",
+              "count": 12,
+              "children": []
+            },
+            {
+              "name": "Additional Income",
+              "count": 8,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Expenses",
+          "count": 20,
+          "children": [
+            {
+              "name": "Fixed Costs",
+              "count": 10,
+              "children": []
+            },
+            {
+              "name": "Variable Costs",
+              "count": 10,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Behavioral",
+      "count": 25,
+      "children": [
+        {
+          "name": "Online Activity",
+          "count": 15,
+          "children": [
+            {
+              "name": "Social Media",
+              "count": 8,
+              "children": []
+            },
+            {
+              "name": "Shopping Patterns",
+              "count": 7,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Offline Activity",
+          "count": 10,
+          "children": [
+            {
+              "name": "Physical Store Visits",
+              "count": 5,
+              "children": []
+            },
+            {
+              "name": "Event Attendance",
+              "count": 5,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,7 @@ from utils.data_validation import validate_hyperparameter_data, load_json_data
 
 st.set_page_config(page_title="Hyperparameter Impact", page_icon="📈")
 
-st.title("Hyperparameter Impact Visualization")
+st.title("Hyperparameter Impact")
 
 # Sample data
 sample_data = [

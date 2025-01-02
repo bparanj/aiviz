@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    { "id": 0, "name": "Raw Data" },
+    { "id": 1, "name": "Data Cleaning" },
+    { "id": 2, "name": "Feature Engineering" },
+    { "id": 3, "name": "Model Training" },
+    { "id": 4, "name": "Final Dataset" },
+    { "id": 5, "name": "Discarded" }
+  ],
+  "links": [
+    { "source": 0, "target": 1, "value": 10000 },
+    { "source": 1, "target": 2, "value": 8500 },
+    { "source": 1, "target": 5, "value": 1500 },
+    { "source": 2, "target": 3, "value": 7800 },
+    { "source": 2, "target": 5, "value": 700 },
+    { "source": 3, "target": 4, "value": 7500 },
+    { "source": 3, "target": 5, "value": 300 }
+  ]
+}
