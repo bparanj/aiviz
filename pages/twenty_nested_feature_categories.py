@@ -12,8 +12,17 @@ def validate_node(node: Dict, is_root: bool = False) -> List[str]:
     if not isinstance(node.get('name'), str) or not node['name'].strip():
         errors.append(f"Node must have a non-empty string name")
     
-    if not isinstance(node.get('count'), int) or node['count'] < 0:
-        errors.append(f"Node '{node.get('name', 'Unknown')}' must have a non-negative integer count")
+    # Validate count field exists and is correct type
+    if 'count' not in node:
+        errors.append(f"Node '{node.get('name', 'Unknown')}' must have a count field")
+    else:
+        try:
+            count = int(node['count'])
+            if count < 0:
+                errors.append(f"Node '{node.get('name', 'Unknown')}' must have a non-negative count")
+            node['count'] = count  # Convert to int if it was a string number
+        except (ValueError, TypeError):
+            errors.append(f"Node '{node.get('name', 'Unknown')}' count must be a valid integer")
     
     # Check children if present
     if 'children' in node:
@@ -23,10 +32,22 @@ def validate_node(node: Dict, is_root: bool = False) -> List[str]:
             child_count = 0
             for child in node['children']:
                 errors.extend(validate_node(child))
-                child_count += child.get('count', 0)
+                if 'count' in child:
+                    try:
+                        child_count += int(child['count'])
+                    except (ValueError, TypeError):
+                        pass  # Error will be caught in child validation
             
             # Optional: Verify count matches children
-            if child_count > node['count']:
+            if 'count' in node:
+                try:
+                    node_count = int(node['count'])
+                    if child_count > node_count:
+                        errors.append(f"Node '{node['name']}' count ({node_count}) is less than sum of children ({child_count})")
+                except (ValueError, TypeError):
+                    pass  # Error already caught above in count validation
+    
+    return errors
                 errors.append(f"Node '{node['name']}' count ({node['count']}) is less than sum of children ({child_count})")
     
     return errors
