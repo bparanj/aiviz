@@ -48,6 +48,8 @@ Welcome to the Machine Learning Visualization Dashboard! This application provid
 - **Model Input/Output Distribution**: Visualize data flow through model components and outputs
 - **Resource Consumption**: Analyze time and compute resource usage across pipeline stages
 - **Error/Dropout Tracking**: Visualize data sample flow and identify where samples are dropped in the pipeline
+- **Decision Tree Breakdown**: Explore decision paths and sample distributions in tree-based models
+- **Hierarchical Clustering**: Visualize how data points group into clusters at various levels of granularity
 
 Use the sidebar to navigate between different visualizations. Each visualization supports custom data input via JSON format.
 """)
