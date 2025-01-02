@@ -10,113 +10,45 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from utils.data_validation import validate_json_structure
+from utils.data_validation import validate_neural_network_topology
 
 def load_sample_data():
     """Load sample neural network topology data."""
     sample_data_path = Path(project_root) / "data" / "neural_network_topology_sample.json"
-    with open(sample_data_path, 'r') as f:
+    with open(sample_data_path, 'r') as f: 
         return json.load(f)
 
-def validate_neural_network_data(data):
-    """Validate the neural network topology data structure.
+def build_graph_from_tree(node, graph, parent=None, depth=0):
+    """Build a NetworkX graph from a hierarchical tree structure.
     
-    Checks:
-    1. Basic structure (layers and connections arrays)
-    2. Layer indices (0 to N, sequential)
-    3. Node IDs (unique across all layers)
-    4. Connection references (valid source/target nodes)
-    5. Layer types and minimum requirements
-    6. Connection weights (numeric values)
+    Args:
+        node (dict): Current node in the tree
+        graph (nx.DiGraph): NetworkX graph to build
+        parent (str, optional): Parent node name. Defaults to None.
+        depth (int): Current depth in the tree for layout purposes
+        
+    Returns:
+        tuple: (x_pos, y_pos) Position hints for layout
     """
-    required_fields = {
-        "layers": list,
-        "connections": list
-    }
+    current_name = node["name"]
+    node_type = node.get("type", "default")
     
-    if not validate_json_structure(data, required_fields):
-        return False, "Data must contain 'layers' and 'connections' arrays"
+    # Add this node to the graph with its properties
+    graph.add_node(current_name, 
+                  node_type=node_type,
+                  depth=depth)
     
-    # Check minimum layers requirement
-    if len(data["layers"]) < 2:
-        return False, "Network must have at least 2 layers (input and output)"
+    # If there's a parent, connect them
+    if parent:
+        graph.add_edge(parent, current_name)
     
-    # Validate layers and collect node information
-    layer_indices = set()
-    node_ids = set()
-    node_layers = {}  # Maps node ID to layer index
+    # Process children
+    child_count = len(node["children"])
+    for i, child in enumerate(node["children"]):
+        # Calculate relative position for child
+        build_graph_from_tree(child, graph, current_name, depth + 1)
     
-    for layer in data["layers"]:
-        # Check layer index
-        if not isinstance(layer.get("layerIndex"), (int, float)):
-            return False, "Each layer must have a numeric layerIndex"
-        
-        layer_idx = layer["layerIndex"]
-        if layer_idx in layer_indices:
-            return False, f"Duplicate layer index found: {layer_idx}"
-        layer_indices.add(layer_idx)
-        
-        # Check layer type
-        layer_type = layer.get("layerType", "hidden")
-        if layer_type not in ["input", "hidden", "output"]:
-            return False, f"Invalid layer type: {layer_type}"
-        
-        # Validate nodes array
-        if not isinstance(layer.get("nodes"), list):
-            return False, "Each layer must have a nodes array"
-        if not layer["nodes"]:
-            return False, f"Layer {layer_idx} has no nodes"
-            
-        # Check node IDs
-        for node in layer["nodes"]:
-            if "id" not in node:
-                return False, "Each node must have an id"
-            if node["id"] in node_ids:
-                return False, f"Duplicate node id found: {node['id']}"
-            node_ids.add(node["id"])
-            node_layers[node["id"]] = layer_idx
-    
-    # Verify layer indices are sequential from 0
-    expected_indices = set(range(len(layer_indices)))
-    if layer_indices != expected_indices:
-        return False, "Layer indices must be sequential starting from 0"
-    
-    # Verify input and output layers
-    input_layer = next((l for l in data["layers"] if l.get("layerType") == "input"), None)
-    output_layer = next((l for l in data["layers"] if l.get("layerType") == "output"), None)
-    
-    if not input_layer:
-        return False, "Network must have an input layer"
-    if not output_layer:
-        return False, "Network must have an output layer"
-    if input_layer["layerIndex"] != 0:
-        return False, "Input layer must have index 0"
-    if output_layer["layerIndex"] != len(layer_indices) - 1:
-        return False, "Output layer must be the last layer"
-    
-    # Validate connections
-    for conn in data["connections"]:
-        # Check required fields
-        if "source" not in conn or "target" not in conn:
-            return False, "Each connection must have source and target"
-            
-        # Verify node references
-        if conn["source"] not in node_ids:
-            return False, f"Invalid source node id: {conn['source']}"
-        if conn["target"] not in node_ids:
-            return False, f"Invalid target node id: {conn['target']}"
-            
-        # Check layer ordering
-        source_layer = node_layers[conn["source"]]
-        target_layer = node_layers[conn["target"]]
-        if source_layer >= target_layer:
-            return False, f"Invalid connection: source layer ({source_layer}) must be before target layer ({target_layer})"
-            
-        # Validate weight if present
-        if "weight" in conn and not isinstance(conn["weight"], (int, float)):
-            return False, "Connection weight must be numeric"
-    
-    return True, "Data validation successful"
+    return graph
 
 def main():
     st.title("12. Neural Network Topology")
@@ -166,7 +98,7 @@ def main():
                 return
         
         # Validate data
-        is_valid, message = validate_neural_network_data(data)
+        is_valid, message = validate_neural_network_topology(data)
         if not is_valid:
             st.error(f"Invalid data: {message}")
             return
@@ -179,76 +111,70 @@ def main():
         if 'clicked_node' not in st.session_state:
             st.session_state.clicked_node = None
             
-        # Add nodes with layer information
-        for layer in data["layers"]:
-            layer_idx = layer["layerIndex"]
-            layer_type = layer.get("layerType", "hidden")
-            for node in layer["nodes"]:
-                G.add_node(node["id"], 
-                          layer=layer_idx,
-                          layer_type=layer_type)
+        # Build graph from tree structure
+        build_graph_from_tree(data, G)
         
-        # Add edges with weights
-        for conn in data["connections"]:
-            weight = conn.get("weight", 1.0)
-            G.add_edge(conn["source"], 
-                      conn["target"], 
-                      weight=weight)
+        # Create hierarchical layout
+        pos = nx.spring_layout(G)
         
-        # Create layered layout
-        layers = {}
-        for node, attrs in G.nodes(data=True):
-            layer = attrs["layer"]
-            if layer not in layers:
-                layers[layer] = []
-            layers[layer].append(node)
+        # Adjust positions to create a top-down tree layout
+        root = next(n for n in G.nodes() if G.in_degree(n) == 0)
+        bfs_edges = list(nx.bfs_edges(G, root))
+        bfs_nodes = [root] + [v for _, v in bfs_edges]
         
-        # Calculate node positions
-        pos = {}
-        sorted_layers = sorted(layers.items())
-        layer_count = len(sorted_layers)
+        # Calculate levels for each node
+        levels = {root: 0}
+        for u, v in bfs_edges:
+            levels[v] = levels[u] + 1
+            
+        # Calculate x positions based on tree traversal
+        x_positions = {}
+        current_level = 0
+        level_nodes = []
         
-        for layer_idx, (_, nodes) in enumerate(sorted_layers):
-            node_count = len(nodes)
-            for node_idx, node in enumerate(nodes):
-                # X coordinate based on layer
-                x = layer_idx / max(1, layer_count - 1)
-                # Y coordinate distributed evenly within layer
-                y = node_idx / max(1, node_count - 1)
-                if node_count == 1:
-                    y = 0.5  # Center single nodes
-                pos[node] = [x, y]
+        for node in bfs_nodes:
+            if levels[node] != current_level:
+                # Position nodes in current level
+                width = 1.0 / (len(level_nodes) + 1)
+                for i, n in enumerate(level_nodes, 1):
+                    x_positions[n] = i * width
+                # Reset for next level    
+                current_level = levels[node]
+                level_nodes = []
+            level_nodes.append(node)
+            
+        # Handle last level
+        if level_nodes:
+            width = 1.0 / (len(level_nodes) + 1)
+            for i, n in enumerate(level_nodes, 1):
+                x_positions[n] = i * width
+                
+        # Set final positions combining x and y coordinates
+        max_level = max(levels.values())
+        pos = {node: [x_positions[node], 1 - levels[node]/(max_level + 1)] 
+               for node in G.nodes()}
         
         # Create edges trace
         edge_x = []
         edge_y = []
-        edge_weights = []
         
-        for edge in G.edges(data=True):
+        for edge in G.edges():
             x0, y0 = pos[edge[0]]
             x1, y1 = pos[edge[1]]
             edge_x.extend([x0, x1, None])
             edge_y.extend([y0, y1, None])
-            edge_weights.append(edge[2].get("weight", 1.0))
         
-        # Create edge trace with weight-based coloring
-        # Create edge colors based on weights and highlighting
+        # Create edge colors based on highlighting
         edge_colors = []
         edge_widths = []
         
-        for i, edge in enumerate(G.edges()):
-            weight = edge_weights[i]
+        for edge in G.edges():
             # Highlight edges connected to clicked node
             if clicked_node and (edge[0] == clicked_node or edge[1] == clicked_node):
                 edge_colors.append('rgba(255, 165, 0, 0.8)')  # Orange for highlighted edges
                 edge_widths.append(edge_width * 2)
             else:
-                if show_weights:
-                    # Color based on weight
-                    intensity = min(abs(weight)/2, 1)
-                    edge_colors.append(f'rgba(255, 0, 0, {intensity})')
-                else:
-                    edge_colors.append('#888')
+                edge_colors.append('rgba(128, 128, 128, 0.5)')  # Light gray for normal edges
                 edge_widths.append(edge_width)
         
         edge_trace = go.Scatter(
@@ -259,7 +185,7 @@ def main():
             ),
             hoverinfo='text',
             mode='lines',
-            text=[f"Weight: {w:.2f}" for w in edge_weights],
+            text=[f"Connection: {edge[0]} → {edge[1]}" for edge in G.edges()],
         )
         
         # Create nodes trace
@@ -268,20 +194,28 @@ def main():
         node_text = []
         node_color = []
         
+        # Define color mapping for different node types
+        type_colors = {
+            "Ensemble": "#1f77b4",      # Blue
+            "NeuralNetwork": "#2ca02c",  # Green
+            "RandomForest": "#ff7f0e",   # Orange
+            "ConvolutionalLayer": "#d62728",  # Red
+            "DenseLayer": "#9467bd",     # Purple
+            "DecisionTree": "#8c564b",   # Brown
+            "default": "#7f7f7f"         # Gray
+        }
+        
         for node in G.nodes():
             x, y = pos[node]
             node_x.append(x)
             node_y.append(y)
-            layer_type = G.nodes[node]["layer_type"]
-            node_text.append(f"Node: {node}<br>Layer: {layer_type}")
             
-            # Color nodes based on layer type
-            if layer_type == "input":
-                node_color.append("#1f77b4")  # Blue
-            elif layer_type == "output":
-                node_color.append("#2ca02c")  # Green
-            else:
-                node_color.append("#ff7f0e")  # Orange
+            # Get node properties
+            node_type = G.nodes[node].get('node_type', 'default')
+            node_text.append(f"Name: {node}<br>Type: {node_type}")
+            
+            # Color nodes based on type
+            node_color.append(type_colors.get(node_type, type_colors['default']))
         
         node_trace = go.Scatter(
             x=node_x, y=node_y,
@@ -340,30 +274,29 @@ def main():
         with col2:
             # Add controls for selected node
             if st.session_state.get('clicked_node'):
-                st.markdown("### Selected Node")
-                st.info(f"Node ID: {st.session_state.clicked_node}")
+                st.markdown("### Selected Component")
+                st.info(f"Name: {st.session_state.clicked_node}")
                 
                 # Show node details
-                node_type = G.nodes[st.session_state.clicked_node]['layer_type']
-                layer_idx = G.nodes[st.session_state.clicked_node]['layer']
+                node_type = G.nodes[st.session_state.clicked_node]['node_type']
+                depth = G.nodes[st.session_state.clicked_node]['depth']
                 st.write(f"Type: {node_type}")
-                st.write(f"Layer: {layer_idx}")
+                st.write(f"Depth Level: {depth}")
                 
-                # Show connected nodes
-                in_edges = list(G.in_edges(st.session_state.clicked_node))
-                out_edges = list(G.out_edges(st.session_state.clicked_node))
+                # Show parent/child relationships
+                parent = next(iter(G.predecessors(st.session_state.clicked_node)), None)
+                children = list(G.successors(st.session_state.clicked_node))
                 
-                if in_edges:
-                    st.markdown("#### Input Connections")
-                    for source, _ in in_edges:
-                        weight = G.edges[source, st.session_state.clicked_node]['weight']
-                        st.write(f"From {source} (weight: {weight:.2f})")
+                if parent:
+                    st.markdown("#### Parent Component")
+                    parent_type = G.nodes[parent]['node_type']
+                    st.write(f"{parent} ({parent_type})")
                 
-                if out_edges:
-                    st.markdown("#### Output Connections")
-                    for _, target in out_edges:
-                        weight = G.edges[st.session_state.clicked_node, target]['weight']
-                        st.write(f"To {target} (weight: {weight:.2f})")
+                if children:
+                    st.markdown("#### Child Components")
+                    for child in children:
+                        child_type = G.nodes[child]['node_type']
+                        st.write(f"{child} ({child_type})")
                 
                 if st.button('Clear Selection'):
                     st.session_state.clicked_node = None
@@ -371,16 +304,19 @@ def main():
         
         # Display network statistics
         st.subheader("Network Statistics")
-        st.write(f"Number of layers: {len(data['layers'])}")
-        st.write(f"Total nodes: {len(G.nodes())}")
+        st.write(f"Total components: {len(G.nodes())}")
         st.write(f"Total connections: {len(G.edges())}")
+        st.write(f"Tree depth: {max(nx.shortest_path_length(G, root).values())}")
         
-        # Layer-wise statistics
-        st.subheader("Layer-wise Statistics")
-        for layer in sorted(data["layers"], key=lambda x: x["layerIndex"]):
-            layer_type = layer.get("layerType", "hidden")
-            num_nodes = len(layer["nodes"])
-            st.write(f"Layer {layer['layerIndex']} ({layer_type}): {num_nodes} nodes")
+        # Component type statistics
+        st.subheader("Component Statistics")
+        type_counts = {}
+        for node in G.nodes():
+            node_type = G.nodes[node].get('node_type', 'default')
+            type_counts[node_type] = type_counts.get(node_type, 0) + 1
+            
+        for node_type, count in type_counts.items():
+            st.write(f"{node_type}: {count} components")
         
     except Exception as e:
         st.error(f"Error processing data: {str(e)}")

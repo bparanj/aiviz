@@ -315,3 +315,56 @@ def load_json_data(json_str):
         return json.loads(json_str)
     except Exception as e:
         return None, f"Error parsing JSON: {str(e)}"
+
+def validate_neural_network_topology(data):
+    """
+    Validate neural network topology data format and structure.
+    
+    Args:
+        data (dict): Dictionary containing the hierarchical neural network topology
+        
+    Returns:
+        tuple: (bool, str) - (is_valid, error_message)
+        
+    Validation rules:
+    1. Data must be a dictionary with 'name' and 'children' keys
+    2. Each node must have a 'name' (string) field
+    3. Each node must have a 'children' (list) field
+    4. The 'type' field is optional but must be a string if present
+    5. Each child node must follow the same validation rules recursively
+    """
+    try:
+        def validate_node(node, path="root"):
+            # Check if node is a dictionary
+            if not isinstance(node, dict):
+                return False, f"Invalid node at {path}: Expected a dictionary"
+            
+            # Check required fields
+            if "name" not in node:
+                return False, f"Missing 'name' field at {path}"
+            if "children" not in node:
+                return False, f"Missing 'children' field at {path}"
+                
+            # Validate field types
+            if not isinstance(node["name"], str):
+                return False, f"Invalid 'name' at {path}: Must be a string"
+            if not isinstance(node["children"], list):
+                return False, f"Invalid 'children' at {path}: Must be a list"
+                
+            # Validate optional type field
+            if "type" in node and not isinstance(node["type"], str):
+                return False, f"Invalid 'type' at {path}: Must be a string"
+                
+            # Recursively validate children
+            for i, child in enumerate(node["children"]):
+                child_path = f"{path}.children[{i}]"
+                is_valid, message = validate_node(child, child_path)
+                if not is_valid:
+                    return False, message
+            
+            return True, "Valid node structure"
+        
+        # Start validation from root
+        return validate_node(data)
+    except Exception as e:
+        return False, f"Unexpected error during validation: {str(e)}"
