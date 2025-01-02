@@ -5,3 +5,4 @@ networkx>=3.1
 pandas>=2.0.0
 scipy>=1.10.0
 pytest>=7.0.0
+streamlit-agraph>=0.0.45
