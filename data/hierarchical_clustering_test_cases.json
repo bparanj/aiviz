@@ -1,0 +1,86 @@
+{
+  "valid_cases": [
+    {
+      "name": "Simple Two-Level Tree",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "name": "Child A"
+          },
+          {
+            "name": "Child B"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Deep Nested Tree",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "name": "Level 1A",
+            "children": [
+              {
+                "name": "Level 2A",
+                "children": [
+                  {
+                    "name": "Level 3A"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Single Node Tree",
+      "data": {
+        "name": "Root"
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "name": "Missing Name Field",
+      "data": {
+        "children": [
+          {
+            "name": "Child"
+          }
+        ]
+      },
+      "expected_error": "Missing required field 'name'"
+    },
+    {
+      "name": "Empty Name String",
+      "data": {
+        "name": "",
+        "children": []
+      },
+      "expected_error": "Field 'name' cannot be empty"
+    },
+    {
+      "name": "Invalid Children Type",
+      "data": {
+        "name": "Root",
+        "children": "not an array"
+      },
+      "expected_error": "Field 'children' must be an array"
+    },
+    {
+      "name": "Child Missing Name",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "children": []
+          }
+        ]
+      },
+      "expected_error": "Missing required field 'name'"
+    }
+  ]
+}
