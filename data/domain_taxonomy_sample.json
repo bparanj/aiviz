@@ -1,0 +1,76 @@
+{
+  "name": "All Categories",
+  "count": 1000,
+  "children": [
+    {
+      "name": "Electronics",
+      "count": 400,
+      "children": [
+        {
+          "name": "Mobile Phones",
+          "count": 250,
+          "children": []
+        },
+        {
+          "name": "Laptops",
+          "count": 150,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "count": 300,
+      "children": [
+        {
+          "name": "Fiction",
+          "count": 200,
+          "children": [
+            {
+              "name": "Science Fiction",
+              "count": 100,
+              "children": []
+            },
+            {
+              "name": "Fantasy",
+              "count": 100,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Non-Fiction",
+          "count": 100,
+          "children": [
+            {
+              "name": "Science",
+              "count": 50,
+              "children": []
+            },
+            {
+              "name": "History",
+              "count": 50,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Clothing",
+      "count": 300,
+      "children": [
+        {
+          "name": "Men's Wear",
+          "count": 150,
+          "children": []
+        },
+        {
+          "name": "Women's Wear",
+          "count": 150,
+          "children": []
+        }
+      ]
+    }
+  ]
+}
