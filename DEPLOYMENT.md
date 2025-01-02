@@ -43,6 +43,14 @@ The deployed app includes:
 - Relationship Inference Visualization
 - Graph Clustering Visualization
 - Node Influence Visualization
+- Neural Network Topology Visualization
+- Data Pipeline Flow Visualization
+- Feature Extraction Visualization
+- Model Input/Output Distribution Visualization
+- Resource Consumption Visualization
+- Error/Dropout Tracking Visualization
+- Decision Tree Breakdown Visualization
+- Hierarchical Clustering Visualization
 - Custom data input via JSON for each visualization
 - Interactive features and comprehensive data validation
 
