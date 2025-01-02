@@ -1,0 +1,131 @@
+{
+  "valid_cases": [
+    {
+      "name": "Simple Model",
+      "description": "Single node with no children",
+      "data": {
+        "name": "SimpleModel",
+        "type": "Basic",
+        "children": []
+      }
+    },
+    {
+      "name": "Basic Tree",
+      "description": "Model with two levels",
+      "data": {
+        "name": "ParentModel",
+        "type": "Container",
+        "children": [
+          {
+            "name": "Child1",
+            "type": "Layer",
+            "children": []
+          },
+          {
+            "name": "Child2",
+            "type": "Layer",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex Hierarchy",
+      "description": "Deep nested structure",
+      "data": {
+        "name": "RootModel",
+        "type": "Ensemble",
+        "children": [
+          {
+            "name": "Branch1",
+            "type": "Submodel",
+            "children": [
+              {
+                "name": "Leaf1",
+                "type": "Component",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Optional Type",
+      "description": "Valid model without type field",
+      "data": {
+        "name": "ModelNoType",
+        "children": [
+          {
+            "name": "Layer1",
+            "children": []
+          }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "name": "Missing Name",
+      "description": "Node without required name field",
+      "data": {
+        "type": "Invalid",
+        "children": []
+      },
+      "expected_error": "Node at root must have a 'name' field"
+    },
+    {
+      "name": "Empty Name",
+      "description": "Node with empty name string",
+      "data": {
+        "name": "",
+        "type": "Invalid",
+        "children": []
+      },
+      "expected_error": "Node at root must have a non-empty string name"
+    },
+    {
+      "name": "Invalid Type",
+      "description": "Node with empty type string",
+      "data": {
+        "name": "Model",
+        "type": "",
+        "children": []
+      },
+      "expected_error": "Node at root has invalid type - must be a non-empty string if present"
+    },
+    {
+      "name": "Missing Children",
+      "description": "Node without children array",
+      "data": {
+        "name": "Model",
+        "type": "Invalid"
+      },
+      "expected_error": "Node at root must have a 'children' field (can be empty list)"
+    },
+    {
+      "name": "Invalid Children",
+      "description": "Children not as array",
+      "data": {
+        "name": "Model",
+        "type": "Invalid",
+        "children": "not an array"
+      },
+      "expected_error": "Node at root must have 'children' as a list"
+    },
+    {
+      "name": "Invalid Child Node",
+      "description": "Child missing required fields",
+      "data": {
+        "name": "Parent",
+        "type": "Container",
+        "children": [
+          {
+            "type": "Invalid"
+          }
+        ]
+      },
+      "expected_error": "Node at root.Parent.child0 must have a 'name' field"
+    }
+  ]
+}
