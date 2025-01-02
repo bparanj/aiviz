@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from typing import Dict, List, Optional
 import random
 
-def validate_node(node: Dict) -> List[str]:
+def validate_node(node: Dict, is_root: bool = False) -> List[str]:
     """Validate a single node in the hierarchical clustering tree."""
     errors = []
     
@@ -20,9 +20,37 @@ def validate_node(node: Dict) -> List[str]:
     if 'children' in node:
         if not isinstance(node['children'], list):
             errors.append("Field 'children' must be an array")
+        elif len(node['children']) == 0:
+            errors.append("Children array cannot be empty")
         else:
             for child in node['children']:
-                errors.extend(validate_node(child))
+                if not isinstance(child, dict):
+                    errors.append("Each child must be an object")
+                else:
+                    errors.extend(validate_node(child, False))
+    elif is_root:
+        errors.append("Root node must have children")
+    
+    return errors
+
+def validate_hierarchical_data(data: Dict) -> List[str]:
+    """Validate the entire hierarchical clustering data structure."""
+    if not isinstance(data, dict):
+        return ["Input must be a JSON object"]
+    
+    errors = validate_node(data, True)
+    
+    # Count total nodes to ensure minimum size
+    def count_nodes(node: Dict) -> int:
+        count = 1
+        if 'children' in node:
+            for child in node['children']:
+                count += count_nodes(child)
+        return count
+    
+    total_nodes = count_nodes(data)
+    if total_nodes < 3:
+        errors.append("Tree must have at least 3 nodes for meaningful clustering")
     
     return errors
 
@@ -172,11 +200,38 @@ def main():
         
         if data:
             # Validate data
-            errors = validate_node(data)
+            errors = validate_hierarchical_data(data)
             if errors:
-                st.error("Invalid data structure:")
+                st.error("Invalid hierarchical clustering data structure:")
                 for error in errors:
                     st.error(f"- {error}")
+                
+                # Show validation requirements
+                with st.expander("View Data Format Requirements"):
+                    st.markdown("""
+                    ### Required Data Format
+                    - Root node must have a name and children
+                    - Each node must have a non-empty name
+                    - Children must be an array of valid nodes
+                    - Minimum 3 nodes total for meaningful clustering
+                    
+                    ### Example Structure
+                    ```json
+                    {
+                        "name": "Root Cluster",
+                        "children": [
+                            {
+                                "name": "Cluster A",
+                                "children": [
+                                    {"name": "Point A1"},
+                                    {"name": "Point A2"}
+                                ]
+                            },
+                            {"name": "Cluster B"}
+                        ]
+                    }
+                    ```
+                    """)
             else:
                 # Create visualization
                 fig = create_cluster_visualization(data)
