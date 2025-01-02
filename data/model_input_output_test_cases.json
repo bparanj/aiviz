@@ -1,0 +1,49 @@
+{
+  "valid_case": {
+    "nodes": [
+      { "id": 0, "name": "Raw Data" },
+      { "id": 1, "name": "Model Input Layer" },
+      { "id": 2, "name": "Output Layer" }
+    ],
+    "links": [
+      { "source": 0, "target": 1, "value": 1000 },
+      { "source": 1, "target": 2, "value": 800 }
+    ]
+  },
+  "invalid_cases": {
+    "duplicate_node_ids": {
+      "nodes": [
+        { "id": 0, "name": "Raw Data" },
+        { "id": 0, "name": "Model Input Layer" },
+        { "id": 2, "name": "Output Layer" }
+      ],
+      "links": [
+        { "source": 0, "target": 1, "value": 1000 }
+      ]
+    },
+    "invalid_link_reference": {
+      "nodes": [
+        { "id": 0, "name": "Raw Data" },
+        { "id": 1, "name": "Output Layer" }
+      ],
+      "links": [
+        { "source": 0, "target": 3, "value": 1000 }
+      ]
+    },
+    "negative_value": {
+      "nodes": [
+        { "id": 0, "name": "Raw Data" },
+        { "id": 1, "name": "Output Layer" }
+      ],
+      "links": [
+        { "source": 0, "target": 1, "value": -100 }
+      ]
+    },
+    "single_node": {
+      "nodes": [
+        { "id": 0, "name": "Raw Data" }
+      ],
+      "links": []
+    }
+  }
+}

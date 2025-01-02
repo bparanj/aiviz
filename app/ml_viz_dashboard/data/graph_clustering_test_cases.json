@@ -1,0 +1,62 @@
+{
+  "valid_case": {
+    "nodes": [
+      { "id": "A1", "label": "Team Lead" },
+      { "id": "A2", "label": "Developer 1" },
+      { "id": "A3", "label": "Developer 2" },
+      { "id": "B1", "label": "Product Manager" },
+      { "id": "B2", "label": "Designer 1" },
+      { "id": "B3", "label": "Designer 2" },
+      { "id": "C1", "label": "QA Lead" },
+      { "id": "C2", "label": "QA Engineer" }
+    ],
+    "links": [
+      { "source": "A1", "target": "A2", "weight": 5.0 },
+      { "source": "A1", "target": "A3", "weight": 4.5 },
+      { "source": "A2", "target": "A3", "weight": 4.0 },
+      { "source": "B1", "target": "B2", "weight": 4.8 },
+      { "source": "B1", "target": "B3", "weight": 4.2 },
+      { "source": "B2", "target": "B3", "weight": 3.9 },
+      { "source": "C1", "target": "C2", "weight": 4.7 },
+      { "source": "A1", "target": "B1", "weight": 2.0 },
+      { "source": "B1", "target": "C1", "weight": 1.5 }
+    ]
+  },
+  "invalid_duplicate_id": {
+    "nodes": [
+      { "id": "A1", "label": "Team Lead" },
+      { "id": "A1", "label": "Duplicate ID" }
+    ],
+    "links": []
+  },
+  "invalid_missing_node": {
+    "nodes": [
+      { "id": "A1", "label": "Node A" }
+    ],
+    "links": [
+      { "source": "A1", "target": "B1", "weight": 1.0 }
+    ]
+  },
+  "invalid_weight": {
+    "nodes": [
+      { "id": "A1", "label": "Node A" },
+      { "id": "A2", "label": "Node B" }
+    ],
+    "links": [
+      { "source": "A1", "target": "A2", "weight": "invalid" }
+    ]
+  },
+  "minimal_valid": {
+    "nodes": [
+      { "id": "A1", "label": "Node 1" },
+      { "id": "A2", "label": "Node 2" },
+      { "id": "B1", "label": "Node 3" },
+      { "id": "B2", "label": "Node 4" }
+    ],
+    "links": [
+      { "source": "A1", "target": "A2", "weight": 3.0 },
+      { "source": "B1", "target": "B2", "weight": 2.5 },
+      { "source": "A1", "target": "B1", "weight": 1.0 }
+    ]
+  }
+}

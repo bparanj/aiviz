@@ -1,0 +1,36 @@
+{
+  "name": "Root",
+  "condition": "Age < 30",
+  "samples": 100,
+  "children": [
+    {
+      "name": "Left Subtree",
+      "condition": "Income >= 50k",
+      "samples": 60,
+      "children": [
+        {
+          "name": "Leaf: Approved",
+          "condition": "Output = Approved",
+          "samples": 40
+        },
+        {
+          "name": "Leaf: Denied",
+          "condition": "Output = Denied",
+          "samples": 20
+        }
+      ]
+    },
+    {
+      "name": "Right Subtree",
+      "condition": "Income < 50k",
+      "samples": 40,
+      "children": [
+        {
+          "name": "Leaf: Denied",
+          "condition": "Output = Denied",
+          "samples": 40
+        }
+      ]
+    }
+  ]
+}

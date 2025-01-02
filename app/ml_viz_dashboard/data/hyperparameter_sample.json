@@ -1,0 +1,9 @@
+{
+  "data": [
+    {"paramValue": "10 trees", "metric": 0.75},
+    {"paramValue": "50 trees", "metric": 0.82},
+    {"paramValue": "100 trees", "metric": 0.85},
+    {"paramValue": "200 trees", "metric": 0.88},
+    {"paramValue": "500 trees", "metric": 0.87}
+  ]
+}

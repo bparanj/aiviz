@@ -1,0 +1,82 @@
+{
+  "valid_cases": [
+    {
+      "name": "Basic valid case",
+      "data": [
+        { "class": "Dog", "count": 50 },
+        { "class": "Cat", "count": 30 }
+      ],
+      "expected": true
+    },
+    {
+      "name": "Single class case",
+      "data": [
+        { "class": "Dog", "count": 50 }
+      ],
+      "expected": true
+    },
+    {
+      "name": "Zero count case",
+      "data": [
+        { "class": "Dog", "count": 0 }
+      ],
+      "expected": true
+    }
+  ],
+  "invalid_cases": [
+    {
+      "name": "Empty array",
+      "data": [],
+      "expected": false,
+      "error": "At least one class is required"
+    },
+    {
+      "name": "Missing class field",
+      "data": [
+        { "count": 50 }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-empty class name"
+    },
+    {
+      "name": "Empty class name",
+      "data": [
+        { "class": "", "count": 50 }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-empty class name"
+    },
+    {
+      "name": "Missing count field",
+      "data": [
+        { "class": "Dog" }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-negative count"
+    },
+    {
+      "name": "Negative count",
+      "data": [
+        { "class": "Dog", "count": -1 }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-negative count"
+    },
+    {
+      "name": "Invalid data type for class",
+      "data": [
+        { "class": 123, "count": 50 }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-empty class name"
+    },
+    {
+      "name": "Invalid data type for count",
+      "data": [
+        { "class": "Dog", "count": "50" }
+      ],
+      "expected": false,
+      "error": "Each item must have a non-negative count"
+    }
+  ]
+}

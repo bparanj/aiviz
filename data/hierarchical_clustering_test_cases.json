@@ -1,0 +1,123 @@
+{
+  "valid_cases": [
+    {
+      "name": "Complete Three-Level Tree",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "name": "Child A",
+            "children": [
+              {
+                "name": "Grandchild A1"
+              }
+            ]
+          },
+          {
+            "name": "Child B",
+            "children": [
+              {
+                "name": "Grandchild B1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Deep Nested Tree",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "name": "Level 1A",
+            "children": [
+              {
+                "name": "Level 2A",
+                "children": [
+                  {
+                    "name": "Level 3A"
+                  },
+                  {
+                    "name": "Level 3B"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Level 1B"
+          }
+        ]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "name": "Missing Name Field",
+      "data": {
+        "children": [
+          {
+            "name": "Child"
+          }
+        ]
+      },
+      "expected_error": "Missing required field 'name'"
+    },
+    {
+      "name": "Empty Name String",
+      "data": {
+        "name": "",
+        "children": []
+      },
+      "expected_error": "Field 'name' cannot be empty"
+    },
+    {
+      "name": "Invalid Children Type",
+      "data": {
+        "name": "Root",
+        "children": "not an array"
+      },
+      "expected_error": "Field 'children' must be an array"
+    },
+    {
+      "name": "Child Missing Name",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "children": []
+          }
+        ]
+      },
+      "expected_error": "Missing required field 'name'"
+    },
+    {
+      "name": "Root Without Children",
+      "data": {
+        "name": "Root"
+      },
+      "expected_error": "Root node must have children"
+    },
+    {
+      "name": "Empty Children Array",
+      "data": {
+        "name": "Root",
+        "children": []
+      },
+      "expected_error": "Children array cannot be empty"
+    },
+    {
+      "name": "Too Few Nodes",
+      "data": {
+        "name": "Root",
+        "children": [
+          {
+            "name": "Only Child"
+          }
+        ]
+      },
+      "expected_error": "Tree must have at least 3 nodes"
+    }
+  ]
+}
