@@ -3,6 +3,8 @@ import plotly.graph_objects as go
 import json
 from pathlib import Path
 import pandas as pd
+import networkx as nx
+from streamlit_agraph import agraph, Node, Edge, Config
 
 def load_sample_data():
     """Load sample taxonomy data from JSON file."""
@@ -60,47 +62,96 @@ def process_data_for_treemap(node, parent_id="", level=0):
     
     return ids, labels, parents, values
 
-def create_treemap(data):
-    """Create a Plotly treemap visualization."""
+def create_visualization(data, viz_type="treemap"):
+    """Create a visualization based on the specified type."""
     ids, labels, parents, values = process_data_for_treemap(data)
     
-    fig = go.Figure(go.Treemap(
-        ids=ids,
-        labels=labels,
-        parents=parents,
-        values=values,
-        textinfo="label+value",
-        hovertemplate="""
-        Category: %{label}<br>
-        Count: %{value}<br>
-        Percentage of parent: %{percentParent:.1%}<br>
-        <extra></extra>
-        """,
-        marker=dict(
-            colors=[f"hsl({(i*50)%360}, 70%, 50%)" for i in range(len(ids))]
+    if viz_type.lower() in ["treemap", "sunburst"]:
+        fig = go.Figure(go.Treemap(
+            ids=ids,
+            labels=labels,
+            parents=parents,
+            values=values,
+            textinfo="label+value",
+            type=viz_type.lower(),
+            hovertemplate="""
+            Category: %{label}<br>
+            Count: %{value}<br>
+            Percentage of parent: %{percentParent:.1%}<br>
+            <extra></extra>
+            """,
+            marker=dict(
+                colors=[f"hsl({(i*50)%360}, 70%, 50%)" for i in range(len(ids))]
+            )
+        ))
+        
+        fig.update_layout(
+            title=f"Domain Taxonomy ({viz_type.title()})",
+            width=800,
+            height=600,
+            margin=dict(t=30, l=10, r=10, b=10)
         )
-    ))
+        
+        return fig
+    else:
+        return None  # For collapsible tree, we'll handle it separately
+
+def create_collapsible_tree(data):
+    """Create a collapsible tree visualization using streamlit-agraph."""
     
-    fig.update_layout(
-        title="Domain Taxonomy Visualization",
-        width=800,
-        height=600,
-        margin=dict(t=30, l=10, r=10, b=10)
-    )
+    # Create a directed graph
+    G = nx.DiGraph()
     
-    return fig
+    def add_nodes(node, parent=None):
+        """Recursively add nodes and edges to the graph."""
+        current = node["name"]
+        if parent:
+            G.add_edge(parent, current, weight=node["count"])
+        for child in node["children"]:
+            add_nodes(child, current)
+    
+    add_nodes(data)
+    
+    # Convert to agraph format
+    nodes = [Node(id=node, 
+                 label=f"{node}\n({G.nodes[node].get('weight', '')})",
+                 size=20) 
+            for node in G.nodes()]
+    
+    edges = [Edge(source=edge[0], 
+                 target=edge[1],
+                 type="CURVE_SMOOTH") 
+            for edge in G.edges()]
+    
+    config = Config(width=800,
+                   height=600,
+                   directed=True,
+                   physics=True,
+                   hierarchical=True,
+                   nodeHighlightBehavior=True,
+                   highlightColor="#F7A7A6")
+    
+    return nodes, edges, config
 
 def main():
     st.title("Domain Taxonomy Visualization")
     st.write("""
-    Visualize hierarchical domain categories and their relative sizes using an interactive treemap.
-    Each rectangle's size represents the count or prevalence of items in that category.
+    Visualize hierarchical domain knowledge structures showing categories, subcategories, and their sizes.
+    Choose between different visualization types to explore the taxonomy.
     """)
+    
+    # Visualization type selector
+    viz_type = st.radio(
+        "Select Visualization Type",
+        ["Treemap", "Sunburst", "Collapsible Tree"],
+        key="viz_type"
+    )
     
     # Input method selection
     input_method = st.radio(
-        "Select input method:",
-        ["Use Sample Data", "Upload JSON File", "Paste JSON"]
+        "Select Input Method",
+        ["Use Sample Data", "Upload JSON File", "Paste JSON"],
+        key="input_method"
     )
     
     data = None
@@ -138,21 +189,39 @@ def main():
         with st.expander("View Raw Data"):
             st.json(data)
         
-        # Create and display visualization
-        fig = create_treemap(data)
-        st.plotly_chart(fig, use_container_width=True)
-        
-        # Instructions
-        st.header("Instructions")
-        st.markdown("""
-        - Click on a category to zoom in
-        - Click in the center to zoom out
-        - Hover over sections to see details:
-          - Category name
-          - Count value
-          - Percentage of parent category
-        - Double click to reset the view
-        """)
+        # Create and display visualization based on selected type
+        if viz_type in ["Treemap", "Sunburst"]:
+            fig = create_visualization(data, viz_type.lower())
+            st.plotly_chart(fig, use_container_width=True)
+            
+            st.header("Instructions")
+            st.markdown(f"""
+            ### {viz_type} Visualization Guide
+            - Click on a category to zoom in
+            - Click in the center to zoom out
+            - Hover over sections to see details:
+              - Category name
+              - Count value
+              - Percentage of parent category
+            - Double click to reset the view
+            """)
+        else:  # Collapsible Tree
+            try:
+                nodes, edges, config = create_collapsible_tree(data)
+                st.header("Collapsible Tree Visualization")
+                agraph(nodes=nodes, edges=edges, config=config)
+                
+                st.header("Instructions")
+                st.markdown("""
+                ### Collapsible Tree Visualization Guide
+                - Drag nodes to rearrange the layout
+                - Click and drag the background to pan
+                - Scroll to zoom in/out
+                - Hover over nodes to see details
+                - Click nodes to highlight connections
+                """)
+            except Exception as e:
+                st.error(f"Error creating collapsible tree: {str(e)}")
 
 if __name__ == "__main__":
     main()
