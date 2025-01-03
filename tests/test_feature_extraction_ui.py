@@ -9,7 +9,7 @@ if project_root not in sys.path:
     sys.path.append(project_root)
 
 import streamlit as st
-from pages.fourteen_Feature_Extraction import (
+from pages.page14_Feature_Extraction import (
     create_sankey_diagram,
     load_sample_data,
     validate_feature_extraction_data

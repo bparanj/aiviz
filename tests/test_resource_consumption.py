@@ -12,7 +12,7 @@ project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 # Import the page module
-from pages.sixteen_Resource_Consumption import validate_data, create_resource_chart
+from pages.page16_Resource_Consumption import validate_data, create_resource_chart
 
 def load_test_cases():
     """Load test cases from JSON file."""

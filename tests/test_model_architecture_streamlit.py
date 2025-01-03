@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # Import from the module
-from pages.twenty_one_model_architecture import validate_node, process_data_for_tree, create_tree_chart
+from pages.page21_Model_Architecture import validate_node, process_data_for_tree, create_tree_chart
 
 def load_test_cases():
     test_cases_path = Path(__file__).parent.parent / "data" / "model_architecture_test_cases.json"

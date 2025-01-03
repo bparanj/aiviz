@@ -7,7 +7,7 @@ import os
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pages.domain_taxonomy import validate_node, process_data_for_treemap
+from pages.page22_Domain_Taxonomy import validate_node, process_data_for_treemap
 
 def load_test_cases():
     test_cases_path = Path(__file__).parent.parent / "data" / "domain_taxonomy_test_cases.json"

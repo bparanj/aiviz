@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from typing import cast, List, Dict, Union, Any
 from unittest.mock import MagicMock, patch
-from pages.sixteen_Resource_Consumption import main, create_resource_chart
+from pages.page16_Resource_Consumption import main, create_resource_chart
 
 # Type hints for Plotly objects
 Figure = Any

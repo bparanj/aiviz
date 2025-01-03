@@ -6,7 +6,7 @@ import pytest
 # Add the parent directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from pages.knowledge_graph import validate_knowledge_graph_data
+from pages.page08_Knowledge_Graph import validate_knowledge_graph_data
 
 def load_test_cases():
     test_cases_path = Path(__file__).parent.parent / "data" / "knowledge_graph_test_cases.json"

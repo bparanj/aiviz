@@ -4,7 +4,7 @@ import pytest
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pages.decision_tree_breakdown import validate_tree_data, validate_node
+from pages.page18_Decision_Tree_Breakdown import validate_tree_data, validate_node
 
 # Load test cases
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'decision_tree_test_cases.json')) as f:

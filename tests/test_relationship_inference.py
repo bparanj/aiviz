@@ -17,7 +17,7 @@ sys.path.append(str(project_root))
 
 # Import validate_data from the correct module
 import importlib
-module = importlib.import_module("pages.9_Relationship_Inference")
+module = importlib.import_module("pages.page09_Relationship_Inference")
 validate_data = module.validate_data
 
 def load_test_cases():

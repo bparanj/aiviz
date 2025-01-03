@@ -14,7 +14,7 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from pages.seventeen_Error_Dropout_Tracking import create_sankey_diagram, calculate_statistics, main
+from pages.page17_Error_Dropout_Tracking import create_sankey_diagram, calculate_statistics, main
 
 @pytest.fixture
 def sample_data():

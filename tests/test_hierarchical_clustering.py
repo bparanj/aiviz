@@ -1,6 +1,6 @@
 import json
 import pytest
-from pages.nineteen_Hierarchical_Clustering import validate_hierarchical_data, process_node, create_cluster_visualization
+from pages.page19_Hierarchical_Clustering import validate_hierarchical_data, process_node, create_cluster_visualization
 import plotly.graph_objects as go
 
 def load_test_cases():

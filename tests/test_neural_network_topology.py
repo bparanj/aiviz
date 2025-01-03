@@ -8,290 +8,262 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from pages.twelve_Neural_Network_Topology import validate_neural_network_data
+from utils.data_validation import validate_neural_network_topology
 
-def test_minimum_valid_network():
-    """Test a minimal valid network with just input and output layers."""
+def test_minimum_valid_tree():
+    """Test a minimal valid tree with a single node."""
     valid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "in_1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
-            }
-        ],
-        "connections": [
-            {"source": "in_1", "target": "out_1", "weight": 1.0}
-        ]
+        "name": "SimpleModel",
+        "type": "NeuralNetwork",
+        "children": []
     }
-    is_valid, message = validate_neural_network_data(valid_data)
+    is_valid, message = validate_neural_network_topology(valid_data)
     assert is_valid
-    assert "successful" in message.lower()
+    assert "valid" in message.lower()
 
-def test_complex_valid_network():
-    """Test a more complex network with hidden layers."""
+def test_complex_valid_tree():
+    """Test a complex tree with multiple levels and node types."""
     valid_data = {
-        "layers": [
+        "name": "EnsembleModel",
+        "type": "Ensemble",
+        "children": [
             {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "in_1"}, {"id": "in_2"}]
+                "name": "RandomForestModule",
+                "type": "RandomForest",
+                "children": [
+                    {
+                        "name": "DecisionTree1",
+                        "type": "DecisionTree",
+                        "children": []
+                    },
+                    {
+                        "name": "DecisionTree2",
+                        "type": "DecisionTree",
+                        "children": []
+                    }
+                ]
             },
             {
-                "layerIndex": 1,
-                "layerType": "hidden",
-                "nodes": [{"id": "h1_1"}, {"id": "h1_2"}]
-            },
-            {
-                "layerIndex": 2,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
+                "name": "NeuralNetworkModule",
+                "type": "NeuralNetwork",
+                "children": [
+                    {
+                        "name": "ConvLayer1",
+                        "type": "ConvolutionalLayer",
+                        "children": []
+                    },
+                    {
+                        "name": "DenseLayer1",
+                        "type": "DenseLayer",
+                        "children": []
+                    }
+                ]
             }
-        ],
-        "connections": [
-            {"source": "in_1", "target": "h1_1", "weight": 0.25},
-            {"source": "in_1", "target": "h1_2", "weight": 0.75},
-            {"source": "in_2", "target": "h1_1", "weight": -0.35},
-            {"source": "in_2", "target": "h1_2", "weight": 0.45},
-            {"source": "h1_1", "target": "out_1", "weight": 1.5},
-            {"source": "h1_2", "target": "out_1", "weight": -0.8}
         ]
     }
-    is_valid, message = validate_neural_network_data(valid_data)
+    is_valid, message = validate_neural_network_topology(valid_data)
     assert is_valid
-    assert "successful" in message.lower()
+    assert "valid" in message.lower()
 
-def test_non_sequential_layers():
-    """Test that layer indices must be sequential starting from 0."""
+def test_missing_name():
+    """Test that each node must have a name."""
     invalid_data = {
-        "layers": [
+        "type": "NeuralNetwork",
+        "children": []
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "name" in message.lower()
+
+def test_missing_children():
+    """Test that each node must have a children array."""
+    invalid_data = {
+        "name": "Model",
+        "type": "NeuralNetwork"
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "children" in message.lower()
+
+def test_invalid_children_type():
+    """Test that children must be a list."""
+    invalid_data = {
+        "name": "Model",
+        "type": "NeuralNetwork",
+        "children": "not a list"
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "list" in message.lower()
+
+def test_optional_type_field():
+    """Test that type field is optional."""
+    valid_data = {
+        "name": "SimpleModel",
+        "children": []
+    }
+    is_valid, message = validate_neural_network_topology(valid_data)
+    assert is_valid
+    assert "valid" in message.lower()
+
+def test_empty_name():
+    """Test that name cannot be empty."""
+    invalid_data = {
+        "name": "",
+        "type": "NeuralNetwork",
+        "children": []
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "empty" in message.lower()
+
+def test_invalid_name_type():
+    """Test that name must be a string."""
+    invalid_data = {
+        "name": 123,
+        "type": "NeuralNetwork",
+        "children": []
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "string" in message.lower()
+
+def test_invalid_type_type():
+    """Test that type must be a string if provided."""
+    invalid_data = {
+        "name": "Model",
+        "type": 123,
+        "children": []
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "string" in message.lower()
+
+def test_nested_validation():
+    """Test that validation checks all nested children."""
+    invalid_data = {
+        "name": "Model",
+        "type": "Ensemble",
+        "children": [
             {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "in_1"}]
-            },
-            {
-                "layerIndex": 2,  # Missing index 1
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
+                "name": "SubModel",
+                "type": "NeuralNetwork",
+                "children": [
+                    {
+                        "type": "Layer",  # Missing name
+                        "children": []
+                    }
+                ]
             }
-        ],
-        "connections": [
-            {"source": "in_1", "target": "out_1", "weight": 1.0}
         ]
     }
-    is_valid, message = validate_neural_network_data(invalid_data)
+    is_valid, message = validate_neural_network_topology(invalid_data)
     assert not is_valid
-    assert "sequential" in message.lower()
+    assert "name" in message.lower()
 
-def test_missing_input_layer():
-    """Test that network must have an input layer."""
+def test_invalid_node_structure():
+    """Test that nodes must have valid structure."""
     invalid_data = {
-        "layers": [
+        "name": "Model",
+        "type": "NeuralNetwork",
+        "children": [
             {
-                "layerIndex": 0,
-                "layerType": "hidden",
-                "nodes": [{"id": "h1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
+                "name": "Layer1",
+                "type": "Layer",
+                "invalid_field": "value",  # Invalid field
+                "children": []
             }
-        ],
-        "connections": [
-            {"source": "h1", "target": "out_1", "weight": 1.0}
         ]
     }
-    is_valid, message = validate_neural_network_data(invalid_data)
+    is_valid, message = validate_neural_network_topology(invalid_data)
     assert not is_valid
-    assert "input layer" in message.lower()
-
-def test_invalid_layer_type():
-    """Test that layer types must be input, hidden, or output."""
-    invalid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "invalid",
-                "nodes": [{"id": "in_1"}]
-            }
-        ],
-        "connections": []
-    }
-    is_valid, message = validate_neural_network_data(invalid_data)
-    assert not is_valid
-    assert "layer type" in message.lower()
-
-def test_duplicate_node_ids():
-    invalid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "nodes": [{"id": "node1"}, {"id": "node1"}]  # Duplicate ID
-            }
-        ],
-        "connections": []
-    }
-    is_valid, message = validate_neural_network_data(invalid_data)
-    assert not is_valid
-    assert "duplicate" in message.lower()
-
-def test_invalid_connection_order():
-    """Test that connections must flow forward through layers."""
-    invalid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "in_1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "hidden",
-                "nodes": [{"id": "h1"}]
-            },
-            {
-                "layerIndex": 2,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
-            }
-        ],
-        "connections": [
-            {"source": "h1", "target": "in_1", "weight": 1.0}  # Backward connection
-        ]
-    }
-    is_valid, message = validate_neural_network_data(invalid_data)
-    assert not is_valid
-    assert "before target layer" in message.lower()
-
-def test_invalid_connection_reference():
-    """Test that connections must reference existing nodes."""
-    invalid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "node1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "node2"}]
-            }
-        ],
-        "connections": [
-            {"source": "node1", "target": "nonexistent"}  # Invalid target
-        ]
-    }
-    is_valid, message = validate_neural_network_data(invalid_data)
-    assert not is_valid
-    assert "Invalid" in message
-
-def test_invalid_weight_type():
-    """Test that connection weights must be numeric."""
-    invalid_data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "node1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "node2"}]
-            }
-        ],
-        "connections": [
-            {"source": "node1", "target": "node2", "weight": "0.5"}  # Weight should be numeric
-        ]
-    }
-    is_valid, message = validate_neural_network_data(invalid_data)
-    assert not is_valid
-    assert "weight" in message.lower()
+    assert "structure" in message.lower()
 
 def test_empty_data():
     """Test validation with empty data."""
-    is_valid, message = validate_neural_network_data({})
+    is_valid, message = validate_neural_network_topology({})
     assert not is_valid
-    assert "must contain" in message.lower()
+    assert "missing required field" in message.lower()
 
-def test_empty_layers():
-    """Test validation with empty layers array."""
-    data = {
-        "layers": [],
-        "connections": []
-    }
-    is_valid, message = validate_neural_network_data(data)
-    assert not is_valid
-    assert "at least 2 layers" in message.lower()
-
-def test_empty_layer_nodes():
-    """Test validation with a layer containing no nodes."""
-    data = {
-        "layers": [
+def test_duplicate_names():
+    """Test that sibling nodes cannot have duplicate names."""
+    invalid_data = {
+        "name": "Model",
+        "type": "Ensemble",
+        "children": [
             {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": []
+                "name": "Layer1",
+                "children": []
             },
             {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
+                "name": "Layer1",  # Duplicate name
+                "children": []
             }
-        ],
-        "connections": []
-    }
-    is_valid, message = validate_neural_network_data(data)
-    assert not is_valid
-    assert "has no nodes" in message.lower()
-
-def test_missing_required_fields():
-    """Test validation with missing required fields in layers and connections."""
-    data = {
-        "layers": [
-            {
-                "layerType": "input",  # Missing layerIndex
-                "nodes": [{"id": "in_1"}]
-            }
-        ],
-        "connections": [
-            {"source": "in_1"}  # Missing target
         ]
     }
-    is_valid, message = validate_neural_network_data(data)
+    is_valid, message = validate_neural_network_topology(invalid_data)
     assert not is_valid
-    assert "layerIndex" in message.lower()
+    assert "duplicate" in message.lower()
 
-def test_output_layer_not_last():
-    """Test that output layer must be the last layer."""
-    data = {
-        "layers": [
-            {
-                "layerIndex": 0,
-                "layerType": "input",
-                "nodes": [{"id": "in_1"}]
-            },
-            {
-                "layerIndex": 1,
-                "layerType": "output",
-                "nodes": [{"id": "out_1"}]
-            },
-            {
-                "layerIndex": 2,
-                "layerType": "hidden",
-                "nodes": [{"id": "h1"}]
-            }
-        ],
-        "connections": []
+def test_max_depth():
+    """Test that the tree doesn't exceed maximum allowed depth."""
+    deep_data = {
+        "name": "Level1",
+        "children": [{
+            "name": "Level2",
+            "children": [{
+                "name": "Level3",
+                "children": [{
+                    "name": "Level4",
+                    "children": [{
+                        "name": "Level5",
+                        "children": [{
+                            "name": "Level6",
+                            "children": []
+                        }]
+                    }]
+                }]
+            }]
+        }]
     }
-    is_valid, message = validate_neural_network_data(data)
+    is_valid, message = validate_neural_network_topology(deep_data)
     assert not is_valid
-    assert "output layer must be the last layer" in message.lower()
+    assert "depth" in message.lower()
+
+def test_invalid_children_structure():
+    """Test that children must be properly structured."""
+    invalid_data = {
+        "name": "Model",
+        "type": "NeuralNetwork",
+        "children": [
+            "not an object",  # Invalid child structure
+            {
+                "name": "Layer1",
+                "children": []
+            }
+        ]
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert not is_valid
+    assert "invalid structure" in message.lower()
+
+def test_circular_reference():
+    """Test that circular references are not allowed."""
+    # Note: This is a theoretical test as the JSON structure inherently prevents cycles
+    invalid_data = {
+        "name": "Model",
+        "type": "NeuralNetwork",
+        "children": [
+            {
+                "name": "Layer1",
+                "children": [
+                    {
+                        "name": "Layer2",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    }
+    is_valid, message = validate_neural_network_topology(invalid_data)
+    assert is_valid  # Should pass as there's no way to create actual circular references in JSON

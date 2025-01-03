@@ -4,7 +4,7 @@ import pytest
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pages.twenty_nested_feature_categories import validate_node
+from pages.page20_Nested_Feature_Categories import validate_node
 
 def load_test_cases():
     """Load test cases from JSON file."""

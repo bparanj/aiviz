@@ -7,7 +7,7 @@ import os
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pages.twenty_one_model_architecture import validate_node
+from pages.page21_Model_Architecture import validate_node
 
 def load_test_cases():
     test_cases_path = Path(__file__).parent.parent / "data" / "model_architecture_test_cases.json"

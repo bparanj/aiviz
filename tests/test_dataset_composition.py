@@ -10,7 +10,7 @@ sys.path.append(parent_dir)
 
 def import_validate_data():
     """Import the validate_data function from the Dataset Composition module."""
-    module_path = Path(parent_dir) / "pages" / "23_Dataset_Composition.py"
+    module_path = Path(parent_dir) / "pages" / "page23_Dataset_Composition.py"
     if not module_path.exists():
         raise ImportError(f"Module file not found: {module_path}")
     

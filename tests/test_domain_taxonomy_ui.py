@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 from streamlit.testing.v1 import AppTest
 
-from pages.domain_taxonomy import create_treemap, process_data_for_treemap, validate_node
+from pages.page22_Domain_Taxonomy import create_visualization, process_data_for_treemap, validate_node
 
 def get_test_data():
     """Get test data for visualization testing."""
@@ -33,7 +33,7 @@ def get_test_data():
 
 def test_page_components():
     """Test that all required page components are present."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Check for title
@@ -55,7 +55,7 @@ def test_page_components():
 
 def test_user_input_methods():
     """Test all user input methods."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Test sample data
@@ -80,7 +80,7 @@ def test_user_input_methods():
 
 def test_json_input_handling():
     """Test JSON input functionality."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Select JSON input option
@@ -89,7 +89,7 @@ def test_json_input_handling():
     
     # Input valid JSON
     test_data = get_test_data()
-    at.text_area[0].input(json.dumps(sample_data, indent=2))
+    at.text_area[0].input(json.dumps(test_data, indent=2))
     at.run()
     
     # Verify data display
@@ -100,7 +100,7 @@ def test_json_input_handling():
 
 def test_invalid_json_handling():
     """Test handling of invalid JSON input."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Select JSON input option
@@ -117,7 +117,7 @@ def test_invalid_json_handling():
 
 def test_visualization_layouts():
     """Test different visualization layout options."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Test each visualization type
@@ -141,7 +141,7 @@ def test_visualization_layouts():
 
 def test_interactive_features():
     """Test visualization interactivity for all chart types."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Test each visualization type
@@ -213,8 +213,8 @@ def test_visualization_data_processing():
     
     # Test visualization creation for each type
     for viz_type in ["treemap", "sunburst"]:
-        fig = create_treemap(ids, labels, parents, values, chart_type=viz_type)
-        assert fig.data[0].type == viz_type
+        fig = create_visualization(test_data, viz_type)
+        assert fig.data[0].type == viz_type.lower()
         assert len(fig.data[0].ids) == len(ids)
         assert "count" in fig.data[0].hovertemplate.lower()
         assert "percentage" in fig.data[0].hovertemplate.lower()
@@ -225,9 +225,9 @@ def test_visualization_data_processing():
 
 def test_treemap_figure_creation():
     """Test that the treemap figure is created with correct properties."""
-    sample_data = load_sample_data()
-    ids, labels, parents, values = process_data_for_treemap(sample_data)
-    fig = create_treemap(ids, labels, parents, values)
+    test_data = get_test_data()
+    ids, labels, parents, values = process_data_for_treemap(test_data)
+    fig = create_visualization(test_data, "treemap")
     
     # Verify figure properties
     assert fig.data[0].type == "treemap"
@@ -242,7 +242,7 @@ def test_treemap_figure_creation():
 
 def test_error_handling():
     """Test error handling for invalid JSON input."""
-    at = AppTest.from_file("pages/22_Domain_Taxonomy.py")
+    at = AppTest.from_file("../pages/page22_Domain_Taxonomy.py")
     at.run()
     
     # Select JSON paste option
@@ -259,9 +259,8 @@ def test_error_handling():
 
 def test_color_coding():
     """Test that the treemap uses distinct colors for categories."""
-    sample_data = load_sample_data()
-    ids, labels, parents, values = process_data_for_treemap(sample_data)
-    fig = create_treemap(ids, labels, parents, values)
+    test_data = get_test_data()
+    fig = create_visualization(test_data, "treemap")
     
     # Verify color array exists and has unique values
     assert fig.data[0].marker.colors is not None
@@ -278,7 +277,8 @@ def test_data_validation():
             {"name": "Child2", "count": 50, "children": []}
         ]
     }
-    assert validate_node(valid_data) is True
+    is_valid, message = validate_node(valid_data)
+    assert is_valid is True, f"Valid data failed validation: {message}"
     
     # Test invalid data
     invalid_cases = [
@@ -290,5 +290,5 @@ def test_data_validation():
     ]
     
     for invalid_data, case in invalid_cases:
-        with pytest.raises(ValueError, message=f"Should fail for {case}"):
-            validate_node(invalid_data)
+        is_valid, message = validate_node(invalid_data)
+        assert not is_valid, f"Should fail for {case}, but validation passed with message: {message}"

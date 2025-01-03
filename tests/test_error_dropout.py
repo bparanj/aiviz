@@ -9,7 +9,7 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from pages.seventeen_Error_Dropout_Tracking import validate_data
+from pages.page17_Error_Dropout_Tracking import validate_data
 
 def load_test_cases():
     """Load test cases from JSON file."""

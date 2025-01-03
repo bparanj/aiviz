@@ -332,22 +332,35 @@ def validate_neural_network_topology(data):
     3. Each node must have a 'children' (list) field
     4. The 'type' field is optional but must be a string if present
     5. Each child node must follow the same validation rules recursively
+    6. Maximum depth of 5 levels allowed
     """
     try:
-        def validate_node(node, path="root"):
+        if not isinstance(data, dict):
+            return False, "Invalid structure: Expected a dictionary"
+            
+        if not data:
+            return False, "Missing required field 'name'"
+            
+        def validate_node(node, path="root", depth=0, max_depth=4):
+            # Check maximum depth first
+            if depth >= max_depth:
+                return False, f"Maximum depth exceeded at {path}: Maximum allowed depth is {max_depth} levels"
+                
             # Check if node is a dictionary
             if not isinstance(node, dict):
-                return False, f"Invalid node at {path}: Expected a dictionary"
+                return False, f"Invalid structure at {path}"
             
             # Check required fields
             if "name" not in node:
-                return False, f"Missing 'name' field at {path}"
+                return False, f"Missing required field 'name' at {path}"
             if "children" not in node:
-                return False, f"Missing 'children' field at {path}"
+                return False, f"Missing required field 'children' at {path}"
                 
             # Validate field types
             if not isinstance(node["name"], str):
                 return False, f"Invalid 'name' at {path}: Must be a string"
+            if not node["name"].strip():
+                return False, f"Empty name at {path}"
             if not isinstance(node["children"], list):
                 return False, f"Invalid 'children' at {path}: Must be a list"
                 
@@ -355,16 +368,31 @@ def validate_neural_network_topology(data):
             if "type" in node and not isinstance(node["type"], str):
                 return False, f"Invalid 'type' at {path}: Must be a string"
                 
+            # Check for invalid fields
+            valid_fields = {"name", "type", "children"}
+            invalid_fields = set(node.keys()) - valid_fields
+            if invalid_fields: 
+                return False, f"Invalid structure: Found unexpected fields {list(invalid_fields)} at {path}"
+                
+            # Check for duplicate names among children
+            child_names = []
+            for child in node["children"]:
+                if isinstance(child, dict) and "name" in child:
+                    name = child["name"]
+                    if name in child_names:
+                        return False, f"Duplicate name '{name}' found among children at {path}"
+                    child_names.append(name)
+                
             # Recursively validate children
             for i, child in enumerate(node["children"]):
                 child_path = f"{path}.children[{i}]"
-                is_valid, message = validate_node(child, child_path)
+                is_valid, message = validate_node(child, child_path, depth + 1, max_depth)
                 if not is_valid:
                     return False, message
             
-            return True, "Valid node structure"
-        
+            return True, "Valid"
+            
         # Start validation from root
         return validate_node(data)
     except Exception as e:
-        return False, f"Unexpected error during validation: {str(e)}"
+        return False, "Invalid structure"

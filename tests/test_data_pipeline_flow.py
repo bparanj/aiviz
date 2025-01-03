@@ -9,7 +9,7 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from pages.thirteen_Data_Pipeline_Flow import validate_pipeline_data
+from pages.page13_Data_Pipeline_Flow import validate_pipeline_data
 
 def load_test_cases():
     """Load test cases from JSON file."""

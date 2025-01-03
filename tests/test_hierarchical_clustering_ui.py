@@ -3,7 +3,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 import json
 import plotly.graph_objects as go
-from pages.nineteen_Hierarchical_Clustering import (
+from pages.page19_Hierarchical_Clustering import (
     create_cluster_visualization,
     process_node,
     main
@@ -96,7 +96,7 @@ def test_input_methods(input_method):
         mock_radio.return_value = input_method
         
         if input_method == "Use sample data":
-            with patch('pages.nineteen_Hierarchical_Clustering.load_sample_data') as mock_load:
+            with patch('pages.page19_Hierarchical_Clustering.load_sample_data') as mock_load:
                 mock_load.return_value = {"name": "Root", "children": [{"name": "Child"}]}
                 main()
                 mock_load.assert_called_once()
@@ -136,7 +136,7 @@ def test_raw_data_display():
     test_data = {"name": "Root", "children": [{"name": "Child"}]}
     
     with patch('streamlit.radio') as mock_radio, \
-         patch('pages.nineteen_Hierarchical_Clustering.load_sample_data') as mock_load, \
+         patch('pages.page19_Hierarchical_Clustering.load_sample_data') as mock_load, \
          patch('streamlit.expander') as mock_expander, \
          patch('streamlit.json') as mock_json:
         

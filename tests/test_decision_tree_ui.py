@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from typing import Dict, List, Any, cast
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pages.decision_tree_breakdown import create_tree_visualization, process_node, main
+from pages.page18_Decision_Tree_Breakdown import create_tree_visualization, process_node, main
 
 # Load test data
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'decision_tree_test_cases.json')) as f:

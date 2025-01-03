@@ -17,7 +17,7 @@ project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from pages.fourteen_Feature_Extraction import validate_feature_extraction_data, create_sankey_diagram
+from pages.page14_Feature_Extraction import validate_feature_extraction_data, create_sankey_diagram
 
 def load_test_cases():
     """Load test cases from JSON file."""

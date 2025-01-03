@@ -8,7 +8,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
-from pages.ten_graph_clustering import validate_data, create_network_graph, detect_communities
+from pages.page10_Graph_Clustering import validate_data, create_network_graph, detect_communities
 
 def load_test_cases():
     """Load test cases from JSON file."""

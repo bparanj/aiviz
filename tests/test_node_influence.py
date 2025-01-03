@@ -7,7 +7,7 @@ from pathlib import Path
 # Add the parent directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from pages.eleven_Node_Influence import validate_data
+from pages.page11_Node_Influence import validate_data
 
 def load_test_cases():
     """Load test cases from the JSON file."""
