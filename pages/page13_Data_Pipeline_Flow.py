@@ -42,9 +42,9 @@ def validate_pipeline_data(data):
         if len(data["nodes"]) < 2:
             raise ValueError("Pipeline must have at least 2 nodes")
         
-        return True
+        return True, ""
     except ValueError as e:
-        raise ValueError(str(e))
+        return False, str(e)
 
 def create_sankey_diagram(data, highlight_node=None):
     """Create a Sankey diagram using Plotly."""
@@ -142,95 +142,129 @@ def main():
     st.session_state["show_filtered"] = show_filtered
     
     # Load data based on selected source
-    data = None
+    data = st.session_state.get("data")
     
     try:
+        print(f"Data source selected: {data_source}")
+        print(f"Initial data state: {data}")
+        
         if data_source == "Sample Data":
-            data = load_sample_data()
+            if data is None:
+                data = load_sample_data()
+                st.session_state["data"] = data
+                print(f"Loaded sample data: {data is not None}")
         elif data_source == "Upload JSON":
             uploaded_file = st.sidebar.file_uploader("Upload a JSON file", type="json")
             if uploaded_file:
                 try:
                     data = json.load(uploaded_file)
+                    st.session_state["data"] = data
+                    print(f"Loaded uploaded data: {data is not None}")
                 except json.JSONDecodeError:
                     st.error("Invalid JSON file format")
-                    return
+                    print("Failed to parse uploaded JSON")
             else:
                 st.info("Please upload a JSON file")
-                return
+                print("No file uploaded")
         else:  # Paste JSON
             json_str = st.sidebar.text_area("Paste your JSON data here")
             if json_str:
                 try:
                     data = json.loads(json_str)
+                    st.session_state["data"] = data
+                    print(f"Loaded pasted data: {data is not None}")
                 except json.JSONDecodeError:
                     st.error("Invalid JSON format")
-                    return
+                    print("Failed to parse pasted JSON")
             else:
                 st.info("Please paste your JSON data")
-                return
+                print("No JSON text pasted")
         
-        if data is None:
-            return
+        # Only proceed with visualization if we have valid data
+        print(f"Data before validation: {data is not None}")
+        if data is not None:
+            # Validate data
+            is_valid, error_msg = validate_pipeline_data(data)
+            print(f"Validation result: valid={is_valid}, error={error_msg}")
+            if not is_valid:
+                st.error(f"Invalid data: {error_msg}")
+                data = None  # Clear invalid data
+                st.session_state["data"] = None
+                print("Data cleared due to validation failure")
         
-        # Validate data
-        try:
-            validate_pipeline_data(data)
-        except ValueError as e:
-            st.error(f"Invalid data: {str(e)}")
-            return
-        
-        # Track clicked node for highlighting
-        clicked_node = st.session_state.get('clicked_node', None)
-        if 'clicked_node' not in st.session_state:
-            st.session_state.clicked_node = None
-        
-        # Display pipeline statistics first
-        st.subheader("Pipeline Statistics")
-        
-        # Calculate statistics
-        total_input = sum(link["value"] for link in data["links"] if link["source"] == 0)
-        filtered_out = sum(link["value"] for link in data["links"] 
-                         if any(node["name"] == "Filtered Out" and node["id"] == link["target"] 
-                               for node in data["nodes"]))
-        final_output = sum(link["value"] for link in data["links"]
-                         if any(("Set" in node["name"] or node["name"] == "Final Dataset") 
-                               and node["id"] == link["target"] for node in data["nodes"]))
-        
-        # Display statistics in columns
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Total Input Records", f"{total_input:,}")
-        with col2:
-            st.metric("Filtered Out Records", f"{filtered_out:,}")
-        with col3:
-            st.metric("Final Output Records", f"{final_output:,}")
-        
-        # Display retention rate
-        retention_rate = (final_output / total_input * 100) if total_input > 0 else 0
-        st.metric("Data Retention Rate", f"{retention_rate:.1f}%")
-        
-        # Create and display visualization
-        fig = create_sankey_diagram(data, highlight_node=st.session_state.clicked_node)
-        
-        # Display the visualization with click event handling
-        selected_point = st.plotly_chart(
-            fig,
-            use_container_width=True,
-            custom_events=['plotly_click']
-        )
-        
-        # Handle click events
-        if selected_point:
-            click_data = selected_point.get('plotly_click', {})
-            if click_data and click_data.get('points'):
-                point = click_data['points'][0]
-                if 'customdata' in point:
-                    st.session_state.clicked_node = point['customdata']
-                    st.rerun()
+        # Only show visualization and stats if we have valid data
+        if data is not None:
+            # Track clicked node for highlighting
+            clicked_node = st.session_state.get('clicked_node', None)
+            if 'clicked_node' not in st.session_state:
+                st.session_state.clicked_node = None
+            
+            # Display pipeline statistics first
+            st.subheader("Pipeline Statistics")
+            
+            # Calculate statistics
+            total_input = sum(link["value"] for link in data["links"] if link["source"] == 0)
+            filtered_out = sum(link["value"] for link in data["links"] 
+                             if any(node["name"] == "Filtered Out" and node["id"] == link["target"] 
+                                   for node in data["nodes"]))
+            final_output = sum(link["value"] for link in data["links"]
+                             if any(("Set" in node["name"] or node["name"] == "Final Dataset") 
+                                   and node["id"] == link["target"] for node in data["nodes"]))
+            
+            # Display statistics in columns
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total Input Records", f"{total_input:,}")
+            with col2:
+                st.metric("Filtered Out Records", f"{filtered_out:,}")
+            with col3:
+                st.metric("Final Output Records", f"{final_output:,}")
+            
+            # Display retention rate
+            retention_rate = (final_output / total_input * 100) if total_input > 0 else 0
+            st.metric("Data Retention Rate", f"{retention_rate:.1f}%")
+            
+            try:
+                # Create and display visualization
+                print("Creating Sankey diagram...")
+                highlight_node = st.session_state.get("clicked_node")  # Use dict-style access
+                print(f"Using highlight_node: {highlight_node}")
+                fig = create_sankey_diagram(data, highlight_node=highlight_node)
+                print(f"Sankey diagram created successfully: {fig is not None}")
+                print(f"Figure data: {fig.data}")
+                print(f"Figure layout: {fig.layout}")
+                
+                # Display the visualization with click event handling
+                print("Attempting to display plotly chart...")
+                selected_point = st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    custom_events=['plotly_click']
+                )
+                print(f"Chart displayed successfully, selected_point: {selected_point}")
+            
+                # Handle click events
+                if selected_point:
+                    print(f"Processing click event: {selected_point}")
+                    click_data = selected_point.get('plotly_click', {})
+                    if click_data and click_data.get('points'):
+                        point = click_data['points'][0]
+                        if 'customdata' in point:
+                            st.session_state["clicked_node"] = point['customdata']  # Use dict-style access
+                            st.rerun()
+            except Exception as e:
+                print(f"Error during visualization: {str(e)}")
+                import traceback
+                print(f"Traceback: {traceback.format_exc()}")
+                st.error(f"Error creating visualization: {str(e)}")
+                raise  # Re-raise to ensure test failure captures the real error
         
     except Exception as e:
+        print(f"Error processing data: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         st.error(f"Error processing data: {str(e)}")
+        raise  # Re-raise to ensure test failure captures the real error
 
 if __name__ == "__main__":
     main()

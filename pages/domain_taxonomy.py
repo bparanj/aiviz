@@ -42,7 +42,7 @@ def process_data_for_treemap(node, parent_id="", level=0):
     values = []
     
     # Add current node
-    current_id = f"{level}_{node['name']}"
+    current_id = node['name']  # Remove level prefix
     ids.append(current_id)
     labels.append(node['name'])
     values.append(node['count'])
